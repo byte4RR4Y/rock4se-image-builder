@@ -1,4 +1,4 @@
-# rpi5-image-builder
+# rock4se-image-builder
 #####################################################################################
 # This script builds SD-Card images for the Radxa Rock 4 SE as it follows:
     - Building the rootfile system inside a docker container.
