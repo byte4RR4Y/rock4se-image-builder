@@ -1,0 +1,238 @@
+#!/bin/bash
+
+TIMESTAMP=$(date +%s)
+
+usage() {
+    echo "Usage: $0 [-h|--help] [-s|--suite SUITE] [-d|--desktop DESKTOP] [-a|--additional ADDITIONAL] [-u|--username USERNAME] [-p|--password PASSWORD] [-b]"
+    echo "-------------------------------------------------------------------------------------------------"
+    echo "Options:"
+    echo "  -h, --help                      Show this help message and exit"
+    echo "  -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)"
+    echo "  -d, --desktop DESKTOP           Choose the desktop environment (e.g., xfce4, kde, none)"
+    echo "  -a, --additional ADDITIONAL     Choose whether to install additional software (yes/no)"
+    echo "                                  This only has an effect in kombination with -d or --desktop"
+    echo "  -u, --username USERNAME         Enter the username for the sudo user"
+    echo "  -p, --password PASSWORD         Enter the password for the sudo user"
+    echo "  -b                              Build the image with the specified configuration without asking"
+    echo "-------------------------------------------------------------------------------------------------"
+    exit 1
+}
+
+# Check if running with sudo
+if [ "$UID" -ne 0 ]; then
+    echo "This program needs sudo rights."
+    echo "Run it with 'sudo $0'"
+    exit 1
+fi
+
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -h|--help) usage;;
+        -s|--suite) SUITE="$2"; shift ;;
+        -d|--desktop) DESKTOP="$2"; shift ;;
+        -a|--additional) ADDITIONAL="$2"; shift ;;
+        -u|--username) USERNAME="$2"; shift ;;
+        -p|--password) PASSWORD="$2"; shift ;;
+        -b) BUILD="yes" ;;
+        *) echo "Unknown parameter passed: $1"; usage ;;
+    esac
+    shift
+done
+
+echo "----------------------"
+echo "cleaning build area..."
+sleep 2
+rm .config
+rm .rootfs.img
+rm .rootfs.tar
+rm -rf .rootfs/
+rm config/rootfs_size.txt
+echo ""
+clear
+# Check if arguments are missing
+if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ]; then
+clear
+echo "Choose the Debian Suite:"
+echo ""
+echo "1. Testing"
+echo "2. Experimental"
+echo "3. Trixie"
+echo "4. Sid"
+echo "5. Bookworm"
+echo "6. Bullseye"
+echo ""
+read -p "Enter the number of your choice: " choice
+if [[ "$choice" -eq 1 ]]; then
+    echo "SUITE=testing" > .config
+elif [[ "$choice" -eq 2 ]]; then
+    echo "SUITE=experimental" > .config
+elif [[ "$choice" -eq 3 ]]; then
+    echo "SUITE=trixie" > .config
+elif [[ "$choice" -eq 4 ]]; then
+    echo "SUITE=sid" > .config
+elif [[ "$choice" -eq 5 ]]; then
+    echo "SUITE=bookworm" > .config
+elif [[ "$choice" -eq 6 ]]; then
+    echo "SUITE=bullseye" > .config
+else
+	exit 1
+fi
+
+clear
+echo "Choose the Desktop of your choice:"
+echo ""
+echo "1. xfce4"
+echo "2. kde"
+echo "3. none"
+echo ""
+read -p "Enter the number of your choice: " choice
+if [[ "$choice" -eq 1 ]]; then
+    echo "DESKTOP=xfce4" >> .config
+elif [[ "$choice" -eq 2 ]]; then
+    echo "DESKTOP=kde" >> .config
+else
+    echo "DESKTOP=none" >> .config
+fi
+if [[ "$choice" != 3 ]]; then
+	clear
+	echo "Do you want to install additional software?"
+	echo ""
+	echo "1. yes"
+	echo "2. no"
+	echo ""
+	read -p "Enter the number of your choice: " choice2
+	if [[ "$choice2" -eq 1 ]]; then
+	    echo "ADDITIONAL=yes" >> .config
+	else
+	    echo "ADDITIONAL=no" >> .config
+	fi
+else
+	echo "ADDITIONAL=no" >> .config
+fi
+clear
+echo "Let's create a sudo user..."
+echo ""
+read -p "Enter Username: " choice
+
+    echo "USERNAME=$choice" >> .config
+echo ""
+read -p "Enter Password: " choice
+
+    echo "PASSWORD=$choice" >> .config
+clear
+echo "Writing '.config'..."
+while IFS='=' read -r key value; do
+    case "$key" in
+    	SUITE)
+    		SUITE="$value"
+    		;;
+        DESKTOP)
+            DESKTOP="$value"
+            ;;
+        ADDITIONAL)
+            ADDITIONAL="$value"
+            ;;
+        USERNAME)
+            USERNAME="$value"
+            ;;
+        PASSWORD)
+            PASSWORD="$value"
+            ;;
+        *)
+            ;;
+    esac
+done < .config
+fi
+
+
+echo "------------------------------"
+echo "SUITE="$SUITE
+echo "DESKTOP="$DESKTOP
+echo "ADDITIONAL="$ADDITIONAL
+echo "USERNAME="$USERNAME
+echo "PASSWORD="$PASSWORD
+echo "------------------------------"
+# Proceed with building image if -b option provided or ask for confirmation
+if [[ "$BUILD" == "yes" ]]; then
+    echo "Building image with the specified configuration..."
+else
+    echo ""
+	echo "Do you want to build the image with this configuration?"
+	echo ""
+	echo "1. yes"
+	echo "2. no"
+	echo ""
+	read -p "Enter the number of your choice: " choice2
+	if [[ "$choice2" -eq 1 ]]; then
+	    BUILD="yes"
+	else
+	    exit 1
+	fi
+fi
+
+if [[ "$BUILD" == "yes" ]]; then
+echo "---------------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------------"
+
+echo "Reading .config file..."
+while IFS='=' read -r key value; do
+    case "$key" in
+        DESKTOP)
+            DESKTOP="$value"
+            ;;
+        ADDITIONAL)
+            ADDITIONAL="$value"
+            ;;
+        USERNAME)
+            USERNAME="$value"
+            ;;
+        PASSWORD)
+            PASSWORD="$value"
+            ;;
+        *)
+            ;;
+    esac
+done < .config
+
+# Führe den Docker-Build-Befehl aus
+echo "Building Docker image..."
+sleep 1
+docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "ADDITIONAL="$ADDITIONAL --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
+
+echo "---------------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------------"
+echo "---------------------------------------------------------------------------------------"
+
+docker run --platform linux/arm64/v8 -dit --rm --name debiancontainer debian:finest /bin/bash
+docker cp debiancontainer:/rootfs_size.txt config/
+
+ROOTFS=.rootfs.img
+rootfs_size=$(cat config/rootfs_size.txt)
+echo "Creating an empty rootfs image..."
+dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 256)) status=progress
+mkfs.ext4 -L rootfs $ROOTFS -F
+
+mkfs.ext4 ${ROOTFS} -L rootfs -F
+
+mkdir -p .loop/root
+mount ${ROOTFS} .loop/root
+docker export -o .rootfs.tar debiancontainer
+tar -xvf .rootfs.tar -C .loop/root
+docker kill debiancontainer
+umount .loop/root
+rm -rf .loop/root
+e2fsck -fyvC 0 ${ROOTFS}
+resize2fs -M ${ROOTFS}
+gzip ${ROOTFS}
+mkdir -p output
+zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-build-${TIMESTAMP}.img"
+
+rm .rootfs.tar
+rm ${ROOTFS}
+rm ${ROOTFS}.gz
+
+fi
+
+exit 0
