@@ -77,5 +77,5 @@ RUN echo "#! /bin/bash" > /etc/rc.local && \
     echo "fi" >> /etc/rc.local && \
     echo "" >> /etc/rc.local && \
     echo "exit 0" >> /etc/rc.local
-
+RUN chmod +x /etc/rc.local
 RUN echo $(($(du -s -m --exclude=/proc / | awk '{print $1}'))) > /rootfs_size.txt
