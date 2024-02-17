@@ -1,0 +1,8 @@
+firmware-linux
+firmware-linux-nonfree
+firmware-misc-nonfree
+firmware-realtek
+firmware-brcm80211
+firmware-ath9k-htc
+firmware-atheros
+wireless-tools
