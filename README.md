@@ -9,7 +9,7 @@
 ----------------------
     git clone https://github.com/byte4RR4Y/rock4se-builder
     cd rock4se-builder
-    chmod +x build.sh
+    chmod +x ./*
     sudo ./install.sh
 ----------------------
 
