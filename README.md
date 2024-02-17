@@ -21,7 +21,7 @@ You will find your image in the output folder.
 (If you want to conntrol the build by the commandline type './build.sh -h' for further information)
 
 # Adding custom packages to install
-    -If you want to add packages to install, append it to config/packages.txt
+    -If you want to add packages to install, append it to config/apt-packages.txt
      instead of modifying the Dockerfile
 
 # Other Desktops be added soon...
