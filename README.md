@@ -54,7 +54,7 @@ Type './build.sh -h'
     -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)
     -d, --desktop DESKTOP           Choose the desktop environment (e.g., xfce4, kde, none)
     -a, --additional ADDITIONAL     Choose whether to install additional software (yes/no)
-                                  This only has an effect in kombination with -d or --desktop
+                                    This only has an effect in kombination with -d or --desktop
     -u, --username USERNAME         Enter the username for the sudo user
     -p, --password PASSWORD         Enter the password for the sudo user
     -b                              Build the image with the specified configuration without asking
