@@ -45,6 +45,7 @@ DEBIAN:
   - Bullseye
 
 Currently supported desktops:
+  - none(Command line interface/tested)
   - xfce(tested)
   - gnome
   - mate
