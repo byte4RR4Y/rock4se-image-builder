@@ -45,5 +45,12 @@ DEBIAN:
   - Bullseye
 
 Currently supported desktops:
-  - XFCE (Not yet tested, report any issues)
-  - KDE (Not yet tested, report any issues)
+  - xfce(tested)
+  - gnome
+  - mate
+  - cinnamon
+  - lxqt
+  - lxde
+  - unity
+  - budgie
+  - kde plasma
