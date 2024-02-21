@@ -82,19 +82,41 @@ fi
 clear
 echo "Choose the Desktop of your choice:"
 echo ""
-echo "1. xfce4"
-echo "2. kde"
-echo "3. none"
+echo " 0. none"
+echo " 1. xfce"
+echo " 2. gnome"
+echo " 3. mate"
+echo " 4. cinnamon"
+echo " 5. lxqt"
+echo " 6. lxde"
+echo " 7. unity"
+echo " 8. budgie"
+echo " 9. kde plasma"
 echo ""
 read -p "Enter the number of your choice: " choice
-if [[ "$choice" -eq 1 ]]; then
+if [[ "$choice" -eq 0 ]]; then
+    echo "DESKTOP=CLI" >> .config
+elif [[ "$choice" -eq 1 ]]; then
     echo "DESKTOP=xfce4" >> .config
 elif [[ "$choice" -eq 2 ]]; then
+    echo "DESKTOP=gnome" >> .config
+elif [[ "$choice" -eq 3 ]]; then
+    echo "DESKTOP=mate" >> .config
+elif [[ "$choice" -eq 4 ]]; then
+    echo "DESKTOP=cinnamon" >> .config
+elif [[ "$choice" -eq 5 ]]; then
+    echo "DESKTOP=lxqt" >> .config
+elif [[ "$choice" -eq 6 ]]; then
+    echo "DESKTOP=lxde" >> .config
+elif [[ "$choice" -eq 7 ]]; then
+    echo "DESKTOP=unity" >> .config
+elif [[ "$choice" -eq 8 ]]; then
+    echo "DESKTOP=budgie" >> .config
+elif [[ "$choice" -eq 9 ]]; then
     echo "DESKTOP=kde" >> .config
-else
-    echo "DESKTOP=none" >> .config
 fi
-if [[ "$choice" != 3 ]]; then
+
+if [[ "$choice" != 0 ]]; then
 	clear
 	echo "Do you want to install additional software?"
 	echo ""
@@ -227,10 +249,13 @@ e2fsck -fyvC 0 ${ROOTFS}
 resize2fs -M ${ROOTFS}
 gzip ${ROOTFS}
 mkdir -p output
-zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-build-${TIMESTAMP}.img"
+if [[ "$DESKTOP" == "none" ]]; then
+    DESKTOP="CLI"
+fi
+zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}.img"
 
 rm .rootfs.tar
-rm ${ROOTFS}
+rm $ROOTFS
 rm ${ROOTFS}.gz
 
 fi
