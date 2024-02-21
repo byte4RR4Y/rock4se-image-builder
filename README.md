@@ -15,7 +15,6 @@
 
 # To build an SD-Card image:
     sudo ./build.sh
-Building desktops did not work at the moment.
 
 You will find your image in the output folder.
 
