@@ -25,12 +25,6 @@ You will find your image in the output folder.
     -If you want to add packages to install, append it to config/apt-packages.txt
      instead of modifying the Dockerfile
 
-# Other Desktops be added soon...
----------------------------------------------------
- # Contact to the developer: byte4rr4y@gmail.com #
----------------------------------------------------
-
-
 # Required Host system:
   - Debian/amd64 (bullseye, bookworm, MX 21 and MX23 are tested)
   - maybe Ubuntu works too, but the depencies are slightly different
@@ -55,3 +49,7 @@ You will find your image in the output folder.
   - unity
   - budgie
   - kde plasma
+
+---------------------------------------------------
+ # Contact to the developer: byte4rr4y@gmail.com #
+---------------------------------------------------
