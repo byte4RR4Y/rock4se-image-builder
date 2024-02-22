@@ -6,6 +6,6 @@ if [ "$UID" -ne 0 ]; then
     exit 1
 fi
 
-apt update -y && apt install -y git docker.io apparmor qemu-user-static binfmt-support qemu-user qemu-utils
+apt update -y && apt install -y git docker.io apparmor qemu-user-static binfmt-support qemu-user qemu-utils qemu-system-aarch64
 
 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes

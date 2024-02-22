@@ -261,6 +261,6 @@ if [[ "$DESKTOP" == "none" ]]; then
     DESKTOP="CLI"
 fi
 zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
-rm -rf .loop/root
+rm -rf .loop/root .rootfs.img .rootfs.tar
 fi
 
