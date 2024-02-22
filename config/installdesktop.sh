@@ -1,3 +1,4 @@
+#! /bin/bash
 
     if [ "$DESKTOP" == "xfce4" ]; then
         echo "Installing xfce..."
