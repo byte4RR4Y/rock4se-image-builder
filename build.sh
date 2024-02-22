@@ -245,6 +245,7 @@ mount ${ROOTFS} .loop/root
 docker export -o .rootfs.tar debiancontainer
 tar -xvf .rootfs.tar -C .loop/root
 docker kill debiancontainer
+mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
 cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
 cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
 umount .loop/root
@@ -252,8 +253,6 @@ e2fsck -fyvC 0 ${ROOTFS}
 resize2fs -M ${ROOTFS}
 gzip ${ROOTFS}
 mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
-cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
-cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
 
 if [[ "$DESKTOP" == "none" ]]; then
     DESKTOP="CLI"
