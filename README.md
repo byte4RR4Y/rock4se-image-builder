@@ -32,9 +32,9 @@ That's important because after desktop installation we had to reconfigure the
 
 Display manager for the rock4se board as firstboot configuration.
 
-You can change 'ro' to 'rw' in runqemu.sh but after you've finished testing
+You can change 'ro' to 'rw' by running './runqemu.sh <IMAGENAME> rw'
 
-you should run 'touch /etc/firstboot'
+you should run 'touch /etc/firstboot' when you've finished testing the build.
 
 
 # Adding custom packages to install
