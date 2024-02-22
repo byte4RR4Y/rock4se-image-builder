@@ -245,22 +245,20 @@ mount ${ROOTFS} .loop/root
 docker export -o .rootfs.tar debiancontainer
 tar -xvf .rootfs.tar -C .loop/root
 docker kill debiancontainer
+cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
+cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
 umount .loop/root
 e2fsck -fyvC 0 ${ROOTFS}
 resize2fs -M ${ROOTFS}
 gzip ${ROOTFS}
-mount ${ROOTFS} .loop/root
 mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
 cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
 cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
-umount .loop/root
-mv "${ROOTFS}.gz" output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/
-zcat config/boot-rock_pi_4se.bin.gz output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/${ROOTFS}.gz > output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/disk.raw
-rm output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/${ROOTFS}.gz
+
 if [[ "$DESKTOP" == "none" ]]; then
     DESKTOP="CLI"
 fi
 zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
-rm -rf .loop/root .rootfs.img .rootfs.tar
+rm -rf .loop/root .rootfs.img .rootfs.tar "${ROOTFS}.gz"
 fi
 
