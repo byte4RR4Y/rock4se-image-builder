@@ -18,6 +18,10 @@
 
 You will find your image in the output folder.
 
+If you prefer a graphical interface you can download Image-builder2:
+
+https://drive.google.com/file/d/1h_ni_BUCPj5Ob7wUyk_nTow3XgTlLGUF/view?usp=sharing
+
 # Run qemu emulation of your  build
 
 ## For example:
