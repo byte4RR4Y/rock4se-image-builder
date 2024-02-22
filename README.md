@@ -18,9 +18,7 @@
 
 You will find your image in the output folder.
 
-# Run qemu emulation of your build
-
-IMPORTANT it emulates 2x Cortex-A72 and 4x Cortex-M53 cores, so at least you need 6 CPU cores
+# Run qemu emulation of your  build
 
 ## For example:
 ---------------------------------------------------
