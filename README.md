@@ -21,7 +21,7 @@ You will find your image in the output folder.
 # Run qemu emulation of your build
 ## For example:
 ---------------------------------------------------
-./runqemu.sh output/Debian-experimental-CLI-build-1708567367/Debian-experimental-CLI.img
+    ./runqemu.sh output/Debian-experimental-CLI-build-1708567367/Debian-experimental-CLI.img
 ---------------------------------------------------
 
 # Adding custom packages to install
