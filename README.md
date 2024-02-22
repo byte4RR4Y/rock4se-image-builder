@@ -23,6 +23,9 @@ You will find your image in the output folder.
 ---------------------------------------------------
     ./runqemu.sh output/Debian-experimental-CLI-build-1708567367/Debian-experimental-CLI.img
 ---------------------------------------------------
+This is just for testing if the image boots. There's no network setup.
+
+But it's cool...       :-P
 
 # Adding custom packages to install
     -If you want to add packages to install, append it to config/apt-packages.txt
