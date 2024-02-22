@@ -22,7 +22,8 @@ You will find your image in the output folder.
 
 ## For example:
 ---------------------------------------------------
-    ./runqemu.sh output/Debian-experimental-CLI-build-1708567367/Debian-experimental-CLI.img
+    ./runqemu-cli.sh output/Debian-experimental-CLI-build-1708567367/Debian-experimental-CLI.img
+    ./runqemu-desktop.sh output/Debian-experimental-CLI-build-1708567367/Debian-experimental-CLI.img
 ---------------------------------------------------
 This is just to test if the image boots. But it's cool...       :-P
 
@@ -32,9 +33,11 @@ That's important because after desktop installation we had to reconfigure the
 
 Display manager for the rock4se board as firstboot configuration.
 
-You can change 'ro' to 'rw' by running './runqemu.sh <IMAGENAME> rw'
+You can change 'ro' to 'rw' by running './runqemu-cli.sh <IMAGENAME> rw'
 
 you should run 'touch /etc/firstboot' when you've finished testing the build.
+
+'./runqemu-desktop.sh' boots automaticly 'rw'.
 
 
 # Adding custom packages to install
