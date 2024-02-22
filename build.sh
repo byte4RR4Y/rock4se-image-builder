@@ -8,13 +8,15 @@ usage() {
     echo "Options:"
     echo "  -h, --help                      Show this help message and exit"
     echo "  -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)"
-    echo "  -d, --desktop DESKTOP           Choose the desktop environment (e.g., xfce4, kde, none)"
+    echo "  -d, --desktop DESKTOP           Choose the desktop environment."
+    echo "                                  (none/xfce4/gnome/cinnamon/lxqt/lxde/unity/budgie/kde)"
     echo "  -a, --additional ADDITIONAL     Choose whether to install additional software (yes/no)"
     echo "                                  This only has an effect in kombination with -d or --desktop"
     echo "  -u, --username USERNAME         Enter the username for the sudo user"
     echo "  -p, --password PASSWORD         Enter the password for the sudo user"
     echo "  -b                              Build the image with the specified configuration without asking"
     echo "-------------------------------------------------------------------------------------------------"
+    echo "For example: $0 -s sid -d none -a no -u USERNAME123 -p PASSWORD123 -b"
     exit 1
 }
 
@@ -244,20 +246,21 @@ docker export -o .rootfs.tar debiancontainer
 tar -xvf .rootfs.tar -C .loop/root
 docker kill debiancontainer
 umount .loop/root
-rm -rf .loop/root
 e2fsck -fyvC 0 ${ROOTFS}
 resize2fs -M ${ROOTFS}
 gzip ${ROOTFS}
-mkdir -p output
+mount ${ROOTFS} .loop/root
+mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
+cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
+cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
+umount .loop/root
+mv "${ROOTFS}.gz" output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/
+zcat config/boot-rock_pi_4se.bin.gz output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/${ROOTFS}.gz > output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/disk.raw
+rm output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/${ROOTFS}.gz
 if [[ "$DESKTOP" == "none" ]]; then
     DESKTOP="CLI"
 fi
-zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}.img"
-
-rm .rootfs.tar
-rm $ROOTFS
-rm ${ROOTFS}.gz
-
+zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
+rm -rf .loop/root
 fi
 
-exit 0
