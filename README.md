@@ -23,9 +23,18 @@ You will find your image in the output folder.
 ---------------------------------------------------
     ./runqemu.sh output/Debian-experimental-CLI-build-1708567367/Debian-experimental-CLI.img
 ---------------------------------------------------
-This is just to test if the image boots.
+This is just to test if the image boots. But it's cool...       :-P
 
-But it's cool...       :-P
+It boots with errors because I do not emulate TPM and it's a read only boot.
+
+That's important because after desktop installation we had to reconfigure the
+
+Display manager for the rock4se board as firstboot configuration.
+
+You can change 'ro' to 'rw' in runqemu.sh but after you've finished testing
+
+you should run 'touch /etc/firstboot'
+
 
 # Adding custom packages to install
     -If you want to add packages to install, append it to config/apt-packages.txt
