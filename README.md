@@ -33,7 +33,7 @@ But it's cool...       :-P
 
 # Required Host system:
   - Debian/amd64 (bullseye, bookworm, MX 21 and MX23 are tested)
-  - maybe Ubuntu works too, but the depencies are slightly different
+  - maybe Ubuntu works too, but the depencies are slightly different(install.sh is not working)
 
 # What you can build?
 ##DEBIAN:
