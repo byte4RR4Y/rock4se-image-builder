@@ -18,7 +18,6 @@ if [ "$RW" == "" ]; then
     -drive if=none,file=${SDCARD},format=raw,id=hd \
     -device virtio-blk-pci,drive=hd \
     -netdev user,id=mynet \
-    -device virtio-net-pci,netdev=mynet \
     -nographic \
     -bios /usr/lib/u-boot/qemu_arm64/u-boot.bin \
     -append "root=LABEL=rootfs ro"
@@ -29,7 +28,6 @@ elif [ "$RW" == "rw" ]; then
     -drive if=none,file=${SDCARD},format=raw,id=hd \
     -device virtio-blk-pci,drive=hd \
     -netdev user,id=mynet \
-    -device virtio-net-pci,netdev=mynet \
     -nographic \
     -bios /usr/lib/u-boot/qemu_arm64/u-boot.bin \
     -append "root=LABEL=rootfs rw"
