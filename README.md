@@ -41,7 +41,7 @@ You can change 'ro' to 'rw' by running './runqemu-cli.sh <IMAGENAME> rw'
 
 you should run 'touch /etc/firstboot' when you've finished testing the build.
 
-'./runqemu-desktop.sh' boots automaticly 'rw'.
+'./runqemu-desktop.sh' boots automaticly 'rw', because it configures the display correctly.
 
 
 # Adding custom packages to install
