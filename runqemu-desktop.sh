@@ -1,10 +1,12 @@
- SDCARD=$1
+SDCARD=$1
+CPUS=$(nproc) 
+CPUS=$((CPUS > 8 ? 8 : CPUS))
 
 sudo qemu-system-aarch64 \
   -M virt \
   -cpu cortex-a76 \
   -m 2048 \
-  -smp 4 \
+  -smp $CPUS \
   -kernel "$(dirname "$SDCARD")/.qemu/"vmlinuz \
   -initrd "$(dirname "$SDCARD")/.qemu/"initrd.img \
   -append "console=ttyAMA0 root=/dev/vda rw" \
@@ -15,5 +17,5 @@ sudo qemu-system-aarch64 \
   -device virtio-keyboard-pci \
   -netdev user,id=net0 \
   -device virtio-net-pci,netdev=net0 \
-  -device qemu-xhci -display gtk,gl=on,show-cursor=on \
+  -device qemu-xhci -display gtk,gl=on,show-cursor=on,full-screen=on \
   -device virtio-gpu-pci -device virtio-mouse-pci
