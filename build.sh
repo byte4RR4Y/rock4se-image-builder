@@ -139,11 +139,11 @@ echo "Let's create a sudo user..."
 echo ""
 read -p "Enter Username: " choice
 
-    echo "USERNAME=${choice}" >> .config
+    echo "USERNAME=$choice" >> .config
 echo ""
 read -p "Enter Password: " choice
 
-    echo "PASSWORD=${choice}" >> .config
+    echo "PASSWORD=$choice" >> .config
 clear
 echo "Writing '.config'..."
 while IFS='=' read -r key value; do
@@ -242,10 +242,6 @@ if [[ "$BUILD" == "yes" ]]; then
     zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
     rm -rf .loop/root .rootfs.img .rootfs.tar "${ROOTFS}.gz"
     if [ "$DESKTOP" != "CLI" ]; then
-        CPUS=$(nproc) 
-        CPUS=$((CPUS > 8 ? 8 : CPUS))
-        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img nofullscreen"
+        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" nofullscreen
     fi
-    echo "Your build is finished, you'll find it in the outputfolder: Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}"
 fi
-
