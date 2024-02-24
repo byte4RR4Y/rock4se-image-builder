@@ -19,87 +19,70 @@ RUN apt update -y && apt upgrade -y && apt install -y apt-utils dialog aptitude
 RUN aptitude install -y '?priority(required)' '?priority(important)' '?priority(standard)' nano wget curl sudo gpg gpg-agent network-manager zip unzip e2fsprogs
 
 COPY config/apt-packages.txt /root
-RUN aptitude update -y
-RUN xargs aptitude install -y < /root/apt-packages.txt
+RUN apt update -y
+RUN xargs apt install -y < /root/apt-packages.txt
 
 RUN bash -c 'curl -L --output deb.deb "https://github.com/radxa-pkg/radxa-archive-keyring/releases/latest/download/radxa-archive-keyring_$(curl -L https://github.com/radxa-pkg/radxa-archive-keyring/releases/latest/download/VERSION)_all.deb"'
 RUN dpkg -i deb.deb
 RUN rm -f deb.deb
 RUN bash -c 'source /etc/os-release'
 RUN bash -c 'tee /etc/apt/sources.list.d/radxa.list <<< "deb [signed-by=/usr/share/keyrings/radxa-archive-keyring.gpg] https://radxa-repo.github.io/bookworm/ bookworm main"'
-RUN aptitude update -y
+RUN apt update -y
 
-RUN if [ "$DESKTOP" == "xfce4" ]; then \
-        echo "Installing xfce..." && \
-        sleep 3 && \
-        if [ "$ADDITIONAL" == "yes" ]; then \
-	        aptitude install --install-suggests -y xfce4 lightdm xorg firefox-esr xfce4-goodies lightdm-gtk-greeter-settings network-manager-gnome; \
-	    fi && \
-	    aptitude install -y xfce4 lightdm xorg firefox-esr network-manager-gnome; \
-    fi && \
-
-RUN if [ "$DESKTOP" == "gnome" ]; then \
-        echo "Installing gnome..." && \
-        aptitude install -y gdm gdm* gnome-shell && \
-        if [ "$ADDITIONAL" == "yes" ]; then \
-            aptitude install --install-suggests -y gdm gnome-shell gnome-shell-extensions gnome-tweaks gnome-software gnome-contacts gnome-screenshot gnome-software; \
-        fi \
-    fi && \
-
-RUN if [ "$DESKTOP" == "mate" ]; then \
-        echo "Installing mate..." && \
-	    if [ "$ADDITIONAL" == "yes" ]; then \
-            aptitude install --install-suggests -y mate-desktop-environment-core lightdm xorg firefox-esr; \
-        fi && \
-            aptitude install -y mate-desktop-environment-core lightdm xorg firefox-esr; \
-    fi && \
-
-RUN if [ "$DESKTOP" == "cinnamon" ]; then \
-        echo "Installing cinnamon..." && \
-	    if [ "$ADDITIONAL" == "yes" ]; then \
-            aptitude install --install-suggests -y cinnamon-common cinnamon-desktop-environment lightdm xorg firefox-esr; \
-        fi && \
-            aptitude install -y cinnamon-desktop-environment lightdm xorg firefox-esr; \
-    fi && \
-
-RUN if [ "$DESKTOP" == "lxqt" ]; then \
-        echo "Installing lxqt..." && \
-	    if [ "$ADDITIONAL" == "yes" ]; then \
-            aptitude install --install-suggests -y lightdm xorg lxqt-core; \
-        fi && \
-            aptitude install -y lightdm xorg lxqt-core; \
-    fi && \
-
-RUN if [ "$DESKTOP" == "lxde" ]; then \
-        echo "Installing lxde..." && \
-        aptitude install -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software; \
-    fi && \
-
-RUN if [ "$DESKTOP" == "unity" ]; then \
-        echo "Installing unity..." && \
-        wget -qO - https://hub.unity3d.com/linux/keys/public | gpg --dearmor | sudo tee /usr/share/keyrings/Unity_Technologies_ApS.gpg > /dev/null && \
-        sh -c 'echo "deb [signed-by=/usr/share/keyrings/Unity_Technologies_ApS.gpg] https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt/sources.list.d/unityhub.list' && \
-        aptitude update && apt-get install unityhub mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software -y; \
-    fi && \
-
-RUN if [ "$DESKTOP" == "budgie" ]; then \
-        echo "Installing budgie..." && \
-        aptitude upgrade -y && \
-        if [ "$ADDITIONAL" == "yes" ]; then \
-            aptitude install --install-suggests -y budgie-desktop; \
-        fi && \
-            aptitude install -y budgie-desktop; \
-    fi && \
-
-RUN if [ "$DESKTOP" == "kde" ]; then \
-        echo "Installing kde plasma..." && \
-        aptitude upgrade -y && \
-        if [ "$ADDITIONAL" == "yes" ]; then \
-            aptitude install --install-suggests -y sddm kde-full xorg; \
-        fi && \
-            aptitude install -y sddm kde-plasma-desktop xorg; \
-    fi
-
+RUN if [[ $DESKTOP == "xfce4" ]]; then \
+    touch /etc/firstboot && aptitude install -y xfce4 xorg lightdm network-manager-gnome \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    aptitude install -y xfce4-goodies darkcold-gtk-theme firefox-esr synaptic pavucontrol pulseaudio pulseaudio-module-bluetooth vlc gimp menulibre xfce4-power-manager xfce4-settings alsa-utils \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "gnome" ]]; then \
+    touch /etc/firstboot && aptitude install -y gdm gdm* gnome-shell  \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    aptitude install --install-suggests -y gnome-shell-extensions gnome-tweaks gnome-software gnome-contacts gnome-screenshot gnome-software \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "mate" ]]; then \
+    touch /etc/firstboot && aptitude install -y mate-desktop-environment-core lightdm xorg firefox-esr \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    aptitude install --install-suggests -y mate-desktop-environment-core lightdm xorg firefox-esr \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "cinnamon" ]]; then \
+    touch /etc/firstboot && aptitude install -y cinnamon-desktop-environment lightdm xorg firefox-esr \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    aptitude install --install-suggests -y cinnamon-common cinnamon-desktop-environment lightdm xorg firefox-esr \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "lxqt" ]]; then \
+    touch /etc/firstboot && aptitude install -y lightdm xorg lxqt-core \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    aptitude install --install-suggests -y lightdm xorg lxqt-core \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "lxde" ]]; then \
+    touch /etc/firstboot && aptitude install -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    aptitude install --install-suggests -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software \
+        ; fi \
+    ; fi
+# RUN if [[ $DESKTOP == "unity" ]]; then \
+#    touch /etc/firstboot && aptitude install -y xfce4 xorg lightdm network-manager-gnome \
+#        && if [[ $ADDITIONAL == "yes" ]]; then \
+#    aptitude install -y xfce4-goodies darkcold-gtk-theme firefox-esr synaptic pavucontrol pulseaudio pulseaudio-module-bluetooth vlc gimp menulibre xfce4-power-manager xfce4-settings alsa-utils \
+#        ; fi \
+#    ; fi
+RUN if [[ $DESKTOP == "budgie" ]]; then \
+    touch /etc/firstboot && aptitude install -y budgie-desktop \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    aptitude install --install-suggests -y budgie-desktop \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "kde" ]]; then \
+    touch /etc/firstboot && aptitude install -y sddm kde-plasma-desktop xorg \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    aptitude install --install-suggests -y sddm kde-full xorg \
+        ; fi \
+    ; fi
 
 RUN useradd -m -s /bin/bash ${USERNAME}
 RUN echo "${PASSWORD}:${PASSWORD}" | chpasswd
@@ -107,8 +90,8 @@ RUN usermod -aG sudo ${USERNAME}
 
 RUN echo "root=LABEL=rootfs rw quiet splash" > /etc/kernel/cmdline
 
-RUN aptitude install -y wireless-tools net-tools inetutils* initramfs-tools radxa-firmware firmware-brcm80211 network-manager tar zip unzip bzip2 binutils u-boot-menu firmware-linux firmware-linux-nonfree radxa-firmware pulseaudio pulseaudio-module-bluetooth ntpsec locales
-RUN aptitude install -y linux-image-arm64 linux-headers-arm64
+RUN apt install -y wireless-tools net-tools inetutils* initramfs-tools radxa-firmware firmware-brcm80211 network-manager tar zip unzip bzip2 binutils u-boot-menu firmware-linux firmware-linux-nonfree radxa-firmware pulseaudio pulseaudio-module-bluetooth ntpsec locales
+RUN apt install -y linux-image-arm64 linux-headers-arm64
 RUN touch /etc/configboot
 
 RUN echo "#! /bin/bash" > /etc/rc.local && \
