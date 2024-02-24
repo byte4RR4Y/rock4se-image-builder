@@ -36,7 +36,7 @@ RUN if [[ $DESKTOP == "xfce4" ]]; then \
         ; fi \
     ; fi
 RUN if [[ $DESKTOP == "gnome" ]]; then \
-    touch /etc/firstboot && aptitude install -y gdm gdm* gnome-shell  \
+    touch /etc/firstboot && aptitude install -y gdm* gnome-shell  \
         && if [[ $ADDITIONAL == "yes" ]]; then \
     aptitude install --install-suggests -y gnome-shell-extensions gnome-tweaks gnome-software gnome-contacts gnome-screenshot gnome-software \
         ; fi \
