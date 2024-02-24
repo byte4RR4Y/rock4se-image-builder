@@ -29,76 +29,77 @@ RUN bash -c 'source /etc/os-release'
 RUN bash -c 'tee /etc/apt/sources.list.d/radxa.list <<< "deb [signed-by=/usr/share/keyrings/radxa-archive-keyring.gpg] https://radxa-repo.github.io/bookworm/ bookworm main"'
 RUN aptitude update -y
 
-RUN    if [ "$DESKTOP" == "xfce4" ]; then && \
+RUN if [ "$DESKTOP" == "xfce4" ]; then \
         echo "Installing xfce..." && \
         sleep 3 && \
-        if [ "$ADDITIONAL" == "yes" ]; then && \
-	    aptitude install --install-suggests -y xfce4 lightdm xorg firefox-esr xfce4-goodies lightdm-gtk-greeter-settings network-manager-gnome && \
+        if [ "$ADDITIONAL" == "yes" ]; then \
+	        aptitude install --install-suggests -y xfce4 lightdm xorg firefox-esr xfce4-goodies lightdm-gtk-greeter-settings network-manager-gnome; \
 	    fi && \
-	    aptitude install -y xfce4 lightdm xorg firefox-esr network-manager-gnome && \
+	    aptitude install -y xfce4 lightdm xorg firefox-esr network-manager-gnome; \
     fi && \
- && \
 
-RUN    if [ "$DESKTOP" == "gnome" ]; then && \
+RUN if [ "$DESKTOP" == "gnome" ]; then \
         echo "Installing gnome..." && \
         aptitude install -y gdm gdm* gnome-shell && \
-        if [ "$ADDITIONAL" == "yes" ]; then && \
-            aptitude install --install-suggests -y gdm gnome-shell gnome-shell-extensions gnome-tweaks gnome-software gnome-contacts gnome-screenshot gnome-software && \
-        fi && \
+        if [ "$ADDITIONAL" == "yes" ]; then \
+            aptitude install --install-suggests -y gdm gnome-shell gnome-shell-extensions gnome-tweaks gnome-software gnome-contacts gnome-screenshot gnome-software; \
+        fi \
     fi && \
- && \
-RUN    if [ "$DESKTOP" == "mate" ]; then && \
+
+RUN if [ "$DESKTOP" == "mate" ]; then \
         echo "Installing mate..." && \
-	    if [ "$ADDITIONAL" == "yes" ]; then && \
-            aptitude install --install-suggests -y mate-desktop-environment-core lightdm xorg firefox-esr && \
+	    if [ "$ADDITIONAL" == "yes" ]; then \
+            aptitude install --install-suggests -y mate-desktop-environment-core lightdm xorg firefox-esr; \
         fi && \
-            aptitude install -y mate-desktop-environment-core lightdm xorg firefox-esr && \
+            aptitude install -y mate-desktop-environment-core lightdm xorg firefox-esr; \
     fi && \
- && \
-RUN    if [ "$DESKTOP" == "cinnamon" ]; then && \
+
+RUN if [ "$DESKTOP" == "cinnamon" ]; then \
         echo "Installing cinnamon..." && \
-	    if [ "$ADDITIONAL" == "yes" ]; then && \
-            aptitude install --install-suggests -y cinnamon-common cinnamon-desktop-environment lightdm xorg firefox-esr  && \
+	    if [ "$ADDITIONAL" == "yes" ]; then \
+            aptitude install --install-suggests -y cinnamon-common cinnamon-desktop-environment lightdm xorg firefox-esr; \
         fi && \
-            aptitude install -y cinnamon-desktop-environment lightdm xorg firefox-esr && \
+            aptitude install -y cinnamon-desktop-environment lightdm xorg firefox-esr; \
     fi && \
- && \
-RUN     if [ "$DESKTOP" == "lxqt" ]; then && \
+
+RUN if [ "$DESKTOP" == "lxqt" ]; then \
         echo "Installing lxqt..." && \
-	    if [ "$ADDITIONAL" == "yes" ]; then && \
-            aptitude install --install-suggests -y lightdm xorg lxqt-core  && \
+	    if [ "$ADDITIONAL" == "yes" ]; then \
+            aptitude install --install-suggests -y lightdm xorg lxqt-core; \
         fi && \
-            aptitude install -y lightdm xorg lxqt-core && \
+            aptitude install -y lightdm xorg lxqt-core; \
     fi && \
- && \
-RUN     if [ "$DESKTOP" == "lxde" ]; then && \
+
+RUN if [ "$DESKTOP" == "lxde" ]; then \
         echo "Installing lxde..." && \
-        aptitude install -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software && \
+        aptitude install -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software; \
     fi && \
- && \
-RUN     if [ "$DESKTOP" == "unity" ]; then && \
+
+RUN if [ "$DESKTOP" == "unity" ]; then \
         echo "Installing unity..." && \
         wget -qO - https://hub.unity3d.com/linux/keys/public | gpg --dearmor | sudo tee /usr/share/keyrings/Unity_Technologies_ApS.gpg > /dev/null && \
         sh -c 'echo "deb [signed-by=/usr/share/keyrings/Unity_Technologies_ApS.gpg] https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt/sources.list.d/unityhub.list' && \
-        aptitude update && apt-get install unityhub mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software -y && \
+        aptitude update && apt-get install unityhub mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software -y; \
     fi && \
- && \
-RUN     if [ "$DESKTOP" == "budgie" ]; then && \
+
+RUN if [ "$DESKTOP" == "budgie" ]; then \
         echo "Installing budgie..." && \
         aptitude upgrade -y && \
-        if [ "$ADDITIONAL" == "yes" ]; then && \
-            aptitude install --install-suggests -y budgie-desktop && \
+        if [ "$ADDITIONAL" == "yes" ]; then \
+            aptitude install --install-suggests -y budgie-desktop; \
         fi && \
-            aptitude install -y budgie-desktop && \
+            aptitude install -y budgie-desktop; \
     fi && \
-RUN     if [ "$DESKTOP" == "kde" ]; then && \
+
+RUN if [ "$DESKTOP" == "kde" ]; then \
         echo "Installing kde plasma..." && \
         aptitude upgrade -y && \
-        if [ "$ADDITIONAL" == "yes" ]; then && \
-            aptitude install --install-suggests -y sddm kde-full xorg && \
+        if [ "$ADDITIONAL" == "yes" ]; then \
+            aptitude install --install-suggests -y sddm kde-full xorg; \
         fi && \
-            aptitude install -y sddm kde-plasma-desktop xorg && \
+            aptitude install -y sddm kde-plasma-desktop xorg; \
     fi
+
 
 RUN useradd -m -s /bin/bash ${USERNAME}
 RUN echo "${PASSWORD}:${PASSWORD}" | chpasswd
