@@ -139,11 +139,11 @@ echo "Let's create a sudo user..."
 echo ""
 read -p "Enter Username: " choice
 
-    echo "USERNAME=$choice" >> .config
+    echo "USERNAME=${choice}" >> .config
 echo ""
 read -p "Enter Password: " choice
 
-    echo "PASSWORD=$choice" >> .config
+    echo "PASSWORD=${choice}" >> .config
 clear
 echo "Writing '.config'..."
 while IFS='=' read -r key value; do
@@ -196,68 +196,72 @@ else
 fi
 
 if [[ "$BUILD" == "yes" ]]; then
-echo "---------------------------------------------------------------------------------------"
-echo "---------------------------------------------------------------------------------------"
-echo "---------------------------------------------------------------------------------------"
+    while IFS='=' read -r key value; do
+        case "$key" in
+            DESKTOP)
+                DESKTOP="$value"
+                ;;
+            ADDITIONAL)
+                ADDITIONAL="$value"
+                ;;
+            USERNAME)
+                USERNAME="$value"
+                ;;
+            PASSWORD)
+                PASSWORD="$value"
+                ;;
+            *)
+                ;;
+        esac
+    done < .config
 
-echo "Reading .config file..."
-while IFS='=' read -r key value; do
-    case "$key" in
-        DESKTOP)
-            DESKTOP="$value"
-            ;;
-        ADDITIONAL)
-            ADDITIONAL="$value"
-            ;;
-        USERNAME)
-            USERNAME="$value"
-            ;;
-        PASSWORD)
-            PASSWORD="$value"
-            ;;
-        *)
-            ;;
-    esac
-done < .config
+    echo "Building Docker image..."
+    sleep 1
+    docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "ADDITIONAL="$ADDITIONAL --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
+    docker run --platform linux/arm64/v8 -dit --rm --name debiancontainer debian:finest /bin/bash
+    docker cp debiancontainer:/rootfs_size.txt config/
+    ROOTFS=.rootfs.img
+    rootfs_size=$(cat config/rootfs_size.txt)
+    echo "Creating an empty rootfs image..."
+    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 1024)) status=progress
+    mkfs.ext4 -L rootfs $ROOTFS -F
+    mkfs.ext4 ${ROOTFS} -L rootfs -F
+    mkdir -p .loop/root
+    mount ${ROOTFS} .loop/root
+    docker export -o .rootfs.tar debiancontainer
+    tar -xvf .rootfs.tar -C .loop/root
+    docker kill debiancontainer
+    mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
+    cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
+    cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
+    umount .loop/root
+    e2fsck -fyvC 0 ${ROOTFS}
+    resize2fs -M ${ROOTFS}
+    gzip ${ROOTFS}
+    mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
+    zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
+    rm -rf .loop/root .rootfs.img .rootfs.tar "${ROOTFS}.gz"
+    if [ "$DESKTOP" != "CLI" ]; then
+        CPUS=$(nproc) 
+        CPUS=$((CPUS > 8 ? 8 : CPUS))
 
-# Führe den Docker-Build-Befehl aus
-echo "Building Docker image..."
-sleep 1
-docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "ADDITIONAL="$ADDITIONAL --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
-
-echo "---------------------------------------------------------------------------------------"
-echo "---------------------------------------------------------------------------------------"
-echo "---------------------------------------------------------------------------------------"
-
-docker run --platform linux/arm64/v8 -dit --rm --name debiancontainer debian:finest /bin/bash
-docker cp debiancontainer:/rootfs_size.txt config/
-
-ROOTFS=.rootfs.img
-rootfs_size=$(cat config/rootfs_size.txt)
-echo "Creating an empty rootfs image..."
-dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 1024)) status=progress
-mkfs.ext4 -L rootfs $ROOTFS -F
-
-mkfs.ext4 ${ROOTFS} -L rootfs -F
-
-mkdir -p .loop/root
-mount ${ROOTFS} .loop/root
-docker export -o .rootfs.tar debiancontainer
-tar -xvf .rootfs.tar -C .loop/root
-docker kill debiancontainer
-mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
-cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
-cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
-umount .loop/root
-e2fsck -fyvC 0 ${ROOTFS}
-resize2fs -M ${ROOTFS}
-gzip ${ROOTFS}
-mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
-
-if [[ "$DESKTOP" == "none" ]]; then
-    DESKTOP="CLI"
-fi
-zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
-rm -rf .loop/root .rootfs.img .rootfs.tar "${ROOTFS}.gz"
+        qemu-system-aarch64 \
+        -M virt \
+        -cpu cortex-a76 \
+        -m 2048 \
+        -smp $CPUS \
+        -kernel output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/"vmlinuz \
+        -initrd output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/"initrd.img \
+        -append "console=ttyAMA0 root=/dev/vda rw" \
+        -drive if=none,file="output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img",format=raw,id=disk \
+        -bios /usr/lib/u-boot/qemu_arm64/u-boot.bin \
+        -append "root=LABEL=rootfs rw" \
+        -device virtio-blk-device,drive=disk \
+        -device virtio-keyboard-pci \
+        -netdev user,id=net0 \
+        -device virtio-net-pci,netdev=net0 \
+        -device qemu-xhci -display gtk,gl=on,show-cursor=on \
+        -device virtio-gpu-pci -device virtio-mouse-pci
+    fi
 fi
 
