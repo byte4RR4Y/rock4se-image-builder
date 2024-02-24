@@ -8,7 +8,7 @@ CPUS=$((CPUS > 8 ? 8 : CPUS))
 if [ "$SCREEN" == "" ]; then
   sudo qemu-system-aarch64 \
     -M virt \
-    -cpu cortex-a76 \
+    -cpu cortex-a72 \
     -m 2048 \
     -smp $CPUS \
     -kernel "$(dirname "$SDCARD")/.qemu/"vmlinuz \
@@ -26,7 +26,7 @@ if [ "$SCREEN" == "" ]; then
 elif [ "$SCREEN" == "nofullscreen" ]; then
   sudo qemu-system-aarch64 \
     -M virt \
-    -cpu cortex-a76 \
+    -cpu cortex-a72 \
     -m 2048 \
     -smp $CPUS \
     -kernel "$(dirname "$SDCARD")/.qemu/"vmlinuz \
