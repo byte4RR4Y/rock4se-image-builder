@@ -49,7 +49,7 @@ RUN echo "#! /bin/bash" > /etc/rc.local && \
     echo "	chmod u+s /usr/bin/sudo" >> /etc/rc.local && \
     echo "	dpkg-reconfigure lightdm" >> /etc/rc.local && \
     echo "	dpkg-reconfigure sddm" >> /etc/rc.local && \
-    echo "	dpkg-reconfigure gdm" >> /etc/rc.local && \
+    echo "	dpkg-reconfigure gdm3" >> /etc/rc.local && \
     echo "	dpkg-reconfigure xorg" >> /etc/rc.local && \
     echo "	dpkg-reconfigure xinit" >> /etc/rc.local && \
     echo "	rm /etc/configboot" >> /etc/rc.local && \
