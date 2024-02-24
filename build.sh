@@ -244,7 +244,8 @@ if [[ "$BUILD" == "yes" ]]; then
     if [ "$DESKTOP" != "CLI" ]; then
         CPUS=$(nproc) 
         CPUS=$((CPUS > 8 ? 8 : CPUS))
-        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
+        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img nofullscreen"
     fi
+    echo "Your build is finished, you'll find it in the outputfolder: Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}"
 fi
 
