@@ -29,7 +29,7 @@ https://drive.google.com/file/d/1h_ni_BUCPj5Ob7wUyk_nTow3XgTlLGUF/view?usp=shari
     ./runqemu-cli.sh output/Debian-experimental-CLI-build-1708567367/Debian-experimental-CLI.img
     ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708569271/Debian-experimental-xfce4.img
 ---------------------------------------------------
-This is just to test if the image boots. But it's cool...       :-P
+'runqemu-cli.sh', This is just to test if the image boots. But it's cool...       :-P
 
 It boots with errors because I do not emulate TPM and it's a read only boot.
 
