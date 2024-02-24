@@ -32,7 +32,7 @@ RUN bash -c 'tee /etc/apt/sources.list.d/radxa.list <<< "deb [signed-by=/usr/sha
 RUN apt update -y
 
 COPY config/installdesktop.sh /
-RUN ./installdesktop.sh ${DESKTOP}
+RUN ./installdesktop.sh ${DESKTOP} ${ADDITIONAL}
 RUN rm /installdesktop.sh
 
 RUN useradd -m -s /bin/bash ${USERNAME}
