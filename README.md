@@ -1,7 +1,7 @@
 # rock4se-image-builder
 #####################################################################################
 # This script builds SD-Card images for the Radxa Rock 4 SE as it follows:
-    - Building the rootfile system inside a docker container.
+    - Building the root-filesystem inside a docker container.
     - Installing the Kernel.
     - Flash the u-boot bootloader and the root filesystem to the SD-Card image.
 
