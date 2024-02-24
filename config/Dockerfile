@@ -29,60 +29,8 @@ RUN bash -c 'source /etc/os-release'
 RUN bash -c 'tee /etc/apt/sources.list.d/radxa.list <<< "deb [signed-by=/usr/share/keyrings/radxa-archive-keyring.gpg] https://radxa-repo.github.io/bookworm/ bookworm main"'
 RUN apt update -y
 
-RUN if [[ $DESKTOP == "xfce4" ]]; then \
-    touch /etc/firstboot && apt install -y xfce4 xorg lightdm network-manager-gnome \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install -y xfce4-goodies darkcold-gtk-theme firefox-esr synaptic pavucontrol pulseaudio pulseaudio-module-bluetooth vlc gimp menulibre xfce4-power-manager xfce4-settings alsa-utils \
-        ; fi \
-    ; fi
-RUN if [[ $DESKTOP == "gnome" ]]; then \
-    touch /etc/firstboot && apt install -y gdm* gnome-shell  \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y gnome-shell-extensions gnome-tweaks gnome-software gnome-contacts gnome-screenshot gnome-software \
-        ; fi \
-    ; fi
-RUN if [[ $DESKTOP == "mate" ]]; then \
-    touch /etc/firstboot && apt install -y mate-desktop-environment-core lightdm xorg firefox-esr \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y mate-desktop-environment-core lightdm xorg firefox-esr \
-        ; fi \
-    ; fi
-RUN if [[ $DESKTOP == "cinnamon" ]]; then \
-    touch /etc/firstboot && apt install -y cinnamon-desktop-environment lightdm xorg firefox-esr \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y cinnamon-common cinnamon-desktop-environment lightdm xorg firefox-esr \
-        ; fi \
-    ; fi
-RUN if [[ $DESKTOP == "lxqt" ]]; then \
-    touch /etc/firstboot && apt install -y lightdm xorg lxqt-core \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y lightdm xorg lxqt-core \
-        ; fi \
-    ; fi
-RUN if [[ $DESKTOP == "lxde" ]]; then \
-    touch /etc/firstboot && apt install -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software \
-        ; fi \
-    ; fi
-# RUN if [[ $DESKTOP == "unity" ]]; then \
-#    touch /etc/firstboot && apt install -y xfce4 xorg lightdm network-manager-gnome \
-#        && if [[ $ADDITIONAL == "yes" ]]; then \
-#    apt install -y xfce4-goodies darkcold-gtk-theme firefox-esr synaptic pavucontrol pulseaudio pulseaudio-module-bluetooth vlc gimp menulibre xfce4-power-manager xfce4-settings alsa-utils \
-#        ; fi \
-#    ; fi
-RUN if [[ $DESKTOP == "budgie" ]]; then \
-    touch /etc/firstboot && apt install -y budgie-desktop \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y budgie-desktop \
-        ; fi \
-    ; fi
-RUN if [[ $DESKTOP == "kde" ]]; then \
-    touch /etc/firstboot && apt install -y sddm kde-plasma-desktop xorg \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y sddm kde-full xorg \
-        ; fi \
-    ; fi
+COPY config/installdesktop.sh /
+RUN /installdesktop.sh ${DESKTOP} ${ADDITIONAL}
 
 RUN useradd -m -s /bin/bash ${USERNAME}
 RUN echo "${PASSWORD}:${PASSWORD}" | chpasswd
