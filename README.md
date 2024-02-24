@@ -26,23 +26,12 @@ https://drive.google.com/file/d/1h_ni_BUCPj5Ob7wUyk_nTow3XgTlLGUF/view?usp=shari
 
 ## For example:
 ---------------------------------------------------
-    ./runqemu-cli.sh output/Debian-experimental-CLI-build-1708567367/Debian-experimental-CLI.img
     ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708569271/Debian-experimental-xfce4.img
+    ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708569271/Debian-experimental-xfce4.img nofullscreen
 ---------------------------------------------------
-'runqemu-cli.sh', This is just to test if the image boots. But it's cool...       :-P
+'./runqemu-desktop.sh IMAGENAME' boots automaticly 'rw', because it configures the display correctly.
 
-It boots with errors because I do not emulate TPM and it's a read only boot.
-
-That's important because after desktop installation we had to reconfigure the
-
-Display manager for the rock4se board as firstboot configuration.
-
-You can change 'ro' to 'rw' by running './runqemu-cli.sh IMAGENAME rw'
-
-you should run 'touch /etc/firstboot' when you've finished testing the build.
-
-'./runqemu-desktop.sh' boots automaticly 'rw', because it configures the display correctly.
-
+'./runqemu-desktop.sh IMAGENAME nofullscreen' is booting the image in window-mode
 
 # Adding custom packages to install
     -If you want to add packages to install, append it to config/apt-packages.txt
