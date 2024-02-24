@@ -58,7 +58,7 @@ https://drive.google.com/file/d/1h_ni_BUCPj5Ob7wUyk_nTow3XgTlLGUF/view?usp=shari
   - cinnamon
   - lxqt
   - lxde
-  - unity
+  - unity(did not work at the moment)
   - budgie
   - kde plasma
 
