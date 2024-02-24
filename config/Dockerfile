@@ -31,51 +31,41 @@ RUN bash -c 'source /etc/os-release'
 RUN bash -c 'tee /etc/apt/sources.list.d/radxa.list <<< "deb [signed-by=/usr/share/keyrings/radxa-archive-keyring.gpg] https://radxa-repo.github.io/bookworm/ bookworm main"'
 RUN apt update -y
 
-
-RUN if [[ $DESKTOP == "xfce4" ]]; then \
-    aptitude install -y xfce4 xorg lightdm network-manager-gnome \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    aptitude install -y xfce4-goodies darkcold-gtk-theme firefox-esr synaptic pavucontrol pulseaudio pulseaudio-module-bluetooth vlc gimp menulibre xfce4-power-manager xfce4-settings alsa-utils \
-        ; fi \
-    ; fi
-
-RUN if [[ $DESKTOP == "kde" ]]; then \
-    aptitude install -y sddm kde-plasma \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    aptitude install -y kde-full \
-        ; fi \
-    ; fi
-
-    
+COPY config/installdesktop.sh /
+RUN ./installdesktop.sh ${DESKTOP}
+RUN rm /installdesktop.sh
 
 RUN useradd -m -s /bin/bash ${USERNAME}
 RUN echo "${PASSWORD}:${PASSWORD}" | chpasswd
 RUN usermod -aG sudo ${USERNAME}
 
-
 RUN echo "root=LABEL=rootfs rw quiet splash" > /etc/kernel/cmdline
-
 
 RUN apt install -y wireless-tools net-tools inetutils* initramfs-tools radxa-firmware firmware-brcm80211 network-manager tar zip unzip bzip2 binutils u-boot-menu firmware-linux firmware-linux-nonfree radxa-firmware pulseaudio pulseaudio-module-bluetooth ntpsec locales
 RUN apt install -y linux-image-arm64 linux-headers-arm64
-RUN touch /etc/firstboot
+RUN touch /etc/configboot
 
 RUN echo "#! /bin/bash" > /etc/rc.local && \
     echo "" >> /etc/rc.local && \
-    echo "if [ -e /etc/firstboot ]; then" >> /etc/rc.local && \
-    echo "  resize2fs /dev/mmcblk1p2" >> /etc/rc.local && \
+    echo "if [ -e /etc/configboot ]; then" >> /etc/rc.local && \
     echo "	hostnamectl set-hostname rock4se" >> /etc/rc.local && \
     echo "	chmod u+s /usr/bin/sudo" >> /etc/rc.local && \
     echo "	dpkg-reconfigure lightdm" >> /etc/rc.local && \
     echo "	dpkg-reconfigure sddm" >> /etc/rc.local && \
+    echo "	dpkg-reconfigure gdm" >> /etc/rc.local && \
     echo "	dpkg-reconfigure xorg" >> /etc/rc.local && \
     echo "	dpkg-reconfigure xinit" >> /etc/rc.local && \
-    echo "	dpkg-reconfigure xfce4" >> /etc/rc.local && \
-    echo "	dpkg-reconfigure kde" >> /etc/rc.local && \
-    echo "	rm /etc/firstboot" >> /etc/rc.local && \
-    echo "	reboot" >> /etc/rc.local && \
+    echo "	rm /etc/configboot" >> /etc/rc.local && \
+    echo "	touch /etc/firstboot" >> /etc/rc.local && \
+    echo "	poweroff" >> /etc/rc.local && \
+    echo "fi" >> /etc/rc.local && \
+    echo "if [ -e /etc/firstboot ]; then" >> /etc/rc.local && \
+    echo "	resize2fs /dev/mmcblk1p2" >> /etc/rc.local && \
+    echo "  rm /etc/firstboot" >> /etc/rc.local && \
     echo "fi" >> /etc/rc.local && \
     echo "" >> /etc/rc.local && \
     echo "exit 0" >> /etc/rc.local
+
 RUN chmod +x /etc/rc.local
+
 RUN echo $(($(du -s -m --exclude=/proc / | awk '{print $1}'))) > /rootfs_size.txt

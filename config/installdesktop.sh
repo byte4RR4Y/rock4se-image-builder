@@ -1,5 +1,7 @@
 #! /bin/bash
 
+DESKTOP=$1
+
     if [ "$DESKTOP" == "xfce4" ]; then
         echo "Installing xfce..."
         sleep 3
