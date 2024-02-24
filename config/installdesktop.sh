@@ -14,7 +14,7 @@ DESKTOP=$1
 
     if [ "$DESKTOP" == "gnome" ]; then
         echo "Installing gnome..."
-        apt install -y gdm* gnome-shell
+        apt install -y gdm gdm* gnome-shell
         if [ "$ADDITIONAL" == "yes" ]; then
             apt install --install-suggests -y gnome-shell-extensions gnome-tweaks gnome-software gnome-contacts gnome-screenshot gnome-software
         fi
