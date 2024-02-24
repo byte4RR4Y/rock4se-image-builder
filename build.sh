@@ -224,12 +224,14 @@ if [[ "$BUILD" == "yes" ]]; then
     rootfs_size=$(cat config/rootfs_size.txt)
     echo "Creating an empty rootfs image..."
     dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 1024)) status=progress
+    dd if=/dev/zero of=.space.img bs=1M count=512)
     mkfs.ext4 -L rootfs $ROOTFS -F
     mkfs.ext4 ${ROOTFS} -L rootfs -F
     mkdir -p .loop/root
     mount ${ROOTFS} .loop/root
     docker export -o .rootfs.tar debiancontainer
     tar -xvf .rootfs.tar -C .loop/root
+    mv .space.img .loop/root/
     docker kill debiancontainer
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
     cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
@@ -237,6 +239,9 @@ if [[ "$BUILD" == "yes" ]]; then
     umount .loop/root
     e2fsck -fyvC 0 ${ROOTFS}
     resize2fs -M ${ROOTFS}
+    mount ${ROOTFS} .loop/root
+    rm .loop/root/.space.img
+    umount .loop/root/
     gzip ${ROOTFS}
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
     zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
