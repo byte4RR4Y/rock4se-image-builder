@@ -224,7 +224,7 @@ if [[ "$BUILD" == "yes" ]]; then
     rootfs_size=$(cat config/rootfs_size.txt)
     echo "Creating an empty rootfs image..."
     dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 1024)) status=progress
-    dd if=/dev/zero of=.space.img bs=1M count=512)
+    dd if=/dev/zero of=.space.img bs=1M count=512
     mkfs.ext4 -L rootfs $ROOTFS -F
     mkfs.ext4 ${ROOTFS} -L rootfs -F
     mkdir -p .loop/root
