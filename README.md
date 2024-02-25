@@ -11,6 +11,7 @@ I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
 ----------------------
     git clone https://github.com/byte4RR4Y/rock4se-builder
     cd rock4se-image-builder
+    chmod +x install.sh
     sudo ./install.sh
 ----------------------
 
