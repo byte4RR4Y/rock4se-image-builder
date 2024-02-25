@@ -218,30 +218,30 @@ if [[ "$BUILD" == "yes" ]]; then
     echo "Building Docker image..."
     sleep 1
     docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "ADDITIONAL="$ADDITIONAL --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
+    docker kill debiancontainer
+    docker rm debiancontainer
     docker run --platform linux/arm64/v8 -dit --rm --name debiancontainer debian:finest /bin/bash
     docker cp debiancontainer:/rootfs_size.txt config/
     ROOTFS=.rootfs.img
     rootfs_size=$(cat config/rootfs_size.txt)
     echo "Creating an empty rootfs image..."
     dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 1024)) status=progress
-    dd if=/dev/zero of=.space.img bs=1M count=512
+    
     mkfs.ext4 -L rootfs $ROOTFS -F
     mkfs.ext4 ${ROOTFS} -L rootfs -F
     mkdir -p .loop/root
     mount ${ROOTFS} .loop/root
     docker export -o .rootfs.tar debiancontainer
     tar -xvf .rootfs.tar -C .loop/root
-    mv .space.img .loop/root/
+    
     docker kill debiancontainer
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
+    rm .loop/root/.dockerenv
     cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
     cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
     umount .loop/root
     e2fsck -fyvC 0 ${ROOTFS}
     resize2fs -M ${ROOTFS}
-    mount ${ROOTFS} .loop/root
-    rm .loop/root/.space.img
-    umount .loop/root/
     gzip ${ROOTFS}
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
     zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
