@@ -247,7 +247,7 @@ if [[ "$BUILD" == "yes" ]]; then
     zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
     rm -rf .loop/root .rootfs.img .rootfs.tar "${ROOTFS}.gz"
     if [ "$DESKTOP" != "CLI" ]; then
-        echo "Configuring the display manage..."
+        echo "Configuring the display manager..."
         ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" nofullscreen
     fi
     echo "YOUR BUILD IS FINISHED"
