@@ -44,6 +44,58 @@ RUN apt install -y wireless-tools net-tools inetutils* initramfs-tools radxa-fir
 RUN apt install -y linux-image-arm64 linux-headers-arm64
 RUN touch /etc/configboot
 
+RUN if [[ $DESKTOP == "xfce" ]]; then \
+    apt install -y xfce4 lightdm xorg firefox-esr network-manager-gnome \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    apt install --install-suggests -y xfce4 lightdm xorg firefox-esr xfce4-goodies lightdm-gtk-greeter-settings network-manager-gnome \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "gnome" ]]; then \
+    apt install -y gdm* gnome-shell \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    apt install --install-suggests -y gnome-shell-extensions gnome-tweaks gnome-software gnome-contacts gnome-screenshot gnome-software \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "mate" ]]; then \
+    apt install -y mate-desktop-environment-core lightdm xorg firefox-esr \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    apt install --install-suggests -y mate-desktop-environment-core lightdm xorg firefox-esr \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "cinnamon" ]]; then \
+    apt install -y cinnamon-common cinnamon-desktop-environment lightdm xorg firefox-esr \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    apt install --install-suggests -y cinnamon-common cinnamon-desktop-environment lightdm xorg firefox-esr \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "lxqt" ]]; then \
+    apt install -y lightdm xorg lxqt-core  \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    apt install --install-suggests -y lightdm xorg lxqt-core  \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "lxde" ]]; then \
+    apt install -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    apt install --install-suggests -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "unity" ]]; then \
+    wget -qO - https://hub.unity3d.com/linux/keys/public | gpg --dearmor | sudo tee /usr/share/keyrings/Unity_Technologies_ApS.gpg > /dev/null && sh -c 'echo "deb [signed-by=/usr/share/keyrings/Unity_Technologies_ApS.gpg] https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt/sources.list.d/unityhub.list' && apt update && apt-get install unityhub mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software -y \
+    ; fi
+RUN if [[ $DESKTOP == "budgie" ]]; then \
+    apt install -y budgie-desktop \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    apt install --install-suggests -y budgie-desktop \
+        ; fi \
+    ; fi
+RUN if [[ $DESKTOP == "kde" ]]; then \
+    apt install -y sddm kde-plasma-desktop xorg \
+        && if [[ $ADDITIONAL == "yes" ]]; then \
+    apt install --install-suggests -y sddm kde-full xorg \
+        ; fi \
+    ; fi
+    
 RUN echo "#! /bin/bash" > /etc/rc.local && \
     echo "" >> /etc/rc.local && \
     echo "if [ -e /etc/configboot ]; then" >> /etc/rc.local && \
