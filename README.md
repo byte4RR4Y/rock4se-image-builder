@@ -1,4 +1,4 @@
-# rock4se-image-builder >> PRE-FINAL VERSION <<
+# rock4se-image-builder >> FINAL VERSION <<
 
 I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
 #####################################################################################
