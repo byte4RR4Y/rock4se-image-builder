@@ -10,6 +10,7 @@ apt update -y && apt install -y git docker.io apparmor qemu-user-static binfmt-s
 go mod init Image-builder-GUI_amd64.go
 go mod tidy
 GOOS=linux GOARCH=amd64 go build Image-builder-GUI_amd64 Image-builder-GUI_amd64.go
+chmod +x ./*
 
 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
  
