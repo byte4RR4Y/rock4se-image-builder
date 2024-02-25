@@ -29,11 +29,6 @@ RUN bash -c 'source /etc/os-release'
 RUN bash -c 'tee /etc/apt/sources.list.d/radxa.list <<< "deb [signed-by=/usr/share/keyrings/radxa-archive-keyring.gpg] https://radxa-repo.github.io/bookworm/ bookworm main"'
 RUN apt update -y
 
-COPY config/installdesktop.sh /
-RUN chmod +x /installdesktop.sh
-RUN /installdesktop.sh ${DESKTOP} ${ADDITIONAL}
-RUN rm /installdesktop.sh
-
 RUN useradd -m -s /bin/bash ${USERNAME}
 RUN echo "${PASSWORD}:${PASSWORD}" | chpasswd
 RUN usermod -aG sudo ${USERNAME}
