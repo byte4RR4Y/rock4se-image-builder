@@ -1,5 +1,5 @@
 ARG SUITE
-FROM arm64v8/debian:${SUITE}
+FROM --platform=arm64v8 arm64v8/debian:${SUITE}
 ARG DESKTOP
 ARG ADDITIONAL
 ARG USERNAME
@@ -21,21 +21,6 @@ RUN aptitude install -y '?priority(required)' '?priority(important)' '?priority(
 COPY config/apt-packages.txt /root
 RUN apt update -y
 RUN xargs apt install -y < /root/apt-packages.txt
-
-RUN bash -c 'curl -L --output deb.deb "https://github.com/radxa-pkg/radxa-archive-keyring/releases/latest/download/radxa-archive-keyring_$(curl -L https://github.com/radxa-pkg/radxa-archive-keyring/releases/latest/download/VERSION)_all.deb"'
-RUN dpkg -i deb.deb
-RUN rm -f deb.deb
-RUN bash -c 'source /etc/os-release'
-RUN bash -c 'tee /etc/apt/sources.list.d/radxa.list <<< "deb [signed-by=/usr/share/keyrings/radxa-archive-keyring.gpg] https://radxa-repo.github.io/bookworm/ bookworm main"'
-RUN apt update -y
-
-RUN useradd -m -s /bin/bash ${USERNAME}
-RUN echo "${PASSWORD}:${PASSWORD}" | chpasswd
-RUN usermod -aG sudo ${USERNAME}
-
-RUN echo "root=LABEL=rootfs rw splash" > /etc/kernel/cmdline
-
-RUN apt install -y wireless-tools net-tools inetutils* initramfs-tools radxa-firmware firmware-brcm80211 network-manager tar zip unzip bzip2 binutils u-boot-menu firmware-linux firmware-linux-nonfree radxa-firmware pulseaudio pulseaudio-module-bluetooth ntpsec locales
 
 RUN if [[ $DESKTOP == "xfce4" ]]; then \
     apt install -y xfce4 lightdm xorg firefox-esr network-manager-gnome gvfs-backends \
@@ -89,6 +74,22 @@ RUN if [[ $DESKTOP == "kde" ]]; then \
         ; fi \
     ; fi
 
+
+RUN bash -c 'curl -L --output deb.deb "https://github.com/radxa-pkg/radxa-archive-keyring/releases/latest/download/radxa-archive-keyring_$(curl -L https://github.com/radxa-pkg/radxa-archive-keyring/releases/latest/download/VERSION)_all.deb"'
+RUN dpkg -i deb.deb
+RUN rm -f deb.deb
+RUN bash -c 'source /etc/os-release'
+RUN bash -c 'tee /etc/apt/sources.list.d/radxa.list <<< "deb [signed-by=/usr/share/keyrings/radxa-archive-keyring.gpg] https://radxa-repo.github.io/bookworm/ bookworm main"'
+RUN apt update -y
+
+RUN useradd -m -s /bin/bash ${USERNAME}
+RUN echo "${PASSWORD}:${PASSWORD}" | chpasswd
+RUN usermod -aG sudo ${USERNAME}
+
+RUN echo "root=LABEL=rootfs rw splash" > /etc/kernel/cmdline
+
+RUN apt install -y wireless-tools net-tools inetutils* initramfs-tools radxa-firmware firmware-brcm80211 network-manager tar zip unzip bzip2 binutils u-boot-menu firmware-linux firmware-linux-nonfree radxa-firmware pulseaudio pulseaudio-module-bluetooth ntpsec locales
+
 RUN apt install -y linux-image-arm64 linux-headers-arm64
 RUN touch /etc/configboot
 
@@ -104,6 +105,7 @@ RUN echo "#! /bin/bash" > /etc/rc.local && \
     echo "	dpkg-reconfigure xinit" >> /etc/rc.local && \
     echo "	rm /etc/configboot" >> /etc/rc.local && \
     echo "	touch /etc/firstboot" >> /etc/rc.local && \
+    echo "	apt update -y" >> /etc/rc.local && \
     echo "	apt install -y cloud-initramfs-growroot" >> /etc/rc.local && \
     echo "	poweroff" >> /etc/rc.local && \
     echo "fi" >> /etc/rc.local && \
