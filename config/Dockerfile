@@ -105,8 +105,6 @@ RUN echo "#! /bin/bash" > /etc/rc.local && \
     echo "	dpkg-reconfigure xinit" >> /etc/rc.local && \
     echo "	rm /etc/configboot" >> /etc/rc.local && \
     echo "	touch /etc/firstboot" >> /etc/rc.local && \
-    echo "	apt update -y" >> /etc/rc.local && \
-    echo "	apt install -y cloud-initramfs-growroot" >> /etc/rc.local && \
     echo "	poweroff" >> /etc/rc.local && \
     echo "fi" >> /etc/rc.local && \
     echo "if [ -e /etc/firstboot ]; then" >> /etc/rc.local && \
