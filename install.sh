@@ -12,3 +12,4 @@ go mod tidy
 GOOS=linux GOARCH=amd64 go build Image-builder-GUI_amd64 Image-builder-GUI_amd64.go
 
 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+ 
