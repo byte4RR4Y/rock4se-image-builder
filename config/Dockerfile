@@ -33,14 +33,12 @@ RUN useradd -m -s /bin/bash ${USERNAME}
 RUN echo "${PASSWORD}:${PASSWORD}" | chpasswd
 RUN usermod -aG sudo ${USERNAME}
 
-RUN echo "root=LABEL=rootfs rw quiet splash" > /etc/kernel/cmdline
+RUN echo "root=LABEL=rootfs rw splash" > /etc/kernel/cmdline
 
 RUN apt install -y wireless-tools net-tools inetutils* initramfs-tools radxa-firmware firmware-brcm80211 network-manager tar zip unzip bzip2 binutils u-boot-menu firmware-linux firmware-linux-nonfree radxa-firmware pulseaudio pulseaudio-module-bluetooth ntpsec locales
-RUN apt install -y linux-image-arm64 linux-headers-arm64
-RUN touch /etc/configboot
 
 RUN if [[ $DESKTOP == "xfce4" ]]; then \
-    apt install -y xfce4 lightdm xorg firefox-esr network-manager-gnome \
+    apt install -y xfce4 lightdm xorg firefox-esr network-manager-gnome gvfs-backends \
         && if [[ $ADDITIONAL == "yes" ]]; then \
     apt install --install-suggests -y xfce4 lightdm xorg firefox-esr xfce4-goodies lightdm-gtk-greeter-settings network-manager-gnome \
         ; fi \
@@ -90,7 +88,10 @@ RUN if [[ $DESKTOP == "kde" ]]; then \
     apt install --install-suggests -y sddm kde-full xorg \
         ; fi \
     ; fi
-    
+
+RUN apt install -y linux-image-arm64 linux-headers-arm64
+RUN touch /etc/configboot
+
 RUN echo "#! /bin/bash" > /etc/rc.local && \
     echo "" >> /etc/rc.local && \
     echo "if [ -e /etc/configboot ]; then" >> /etc/rc.local && \
@@ -103,6 +104,7 @@ RUN echo "#! /bin/bash" > /etc/rc.local && \
     echo "	dpkg-reconfigure xinit" >> /etc/rc.local && \
     echo "	rm /etc/configboot" >> /etc/rc.local && \
     echo "	touch /etc/firstboot" >> /etc/rc.local && \
+    echo "	apt install -y cloud-initramfs-growroot" >> /etc/rc.local && \
     echo "	poweroff" >> /etc/rc.local && \
     echo "fi" >> /etc/rc.local && \
     echo "if [ -e /etc/firstboot ]; then" >> /etc/rc.local && \
