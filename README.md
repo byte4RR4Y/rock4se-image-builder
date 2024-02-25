@@ -11,12 +11,12 @@ I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
 ----------------------
     git clone https://github.com/byte4RR4Y/rock4se-builder
     cd rock4se-image-builder
-    chmod +x ./*
     sudo ./install.sh
 ----------------------
 
 # To build an SD-Card image:
     sudo ./build.sh
+OR START Image-builder-GUI_amd64
 
 You will find your image in the output folder.
 
