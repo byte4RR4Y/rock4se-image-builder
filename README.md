@@ -1,4 +1,4 @@
-# rock4se-image-builder >> FINAL VERSION <<
+# rock4se-image-builder >> FINAL VERSION WITH GUI <<
 
 I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
 #####################################################################################
