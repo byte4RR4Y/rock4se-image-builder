@@ -39,7 +39,7 @@ RUN apt install -y wireless-tools net-tools inetutils* initramfs-tools radxa-fir
 RUN apt install -y linux-image-arm64 linux-headers-arm64
 RUN touch /etc/configboot
 
-RUN if [[ $DESKTOP == "xfce" ]]; then \
+RUN if [[ $DESKTOP == "xfce4" ]]; then \
     apt install -y xfce4 lightdm xorg firefox-esr network-manager-gnome \
         && if [[ $ADDITIONAL == "yes" ]]; then \
     apt install --install-suggests -y xfce4 lightdm xorg firefox-esr xfce4-goodies lightdm-gtk-greeter-settings network-manager-gnome \
