@@ -23,9 +23,9 @@ RUN apt update -y
 RUN xargs apt install -y < /root/apt-packages.txt
 
 RUN if [[ $DESKTOP == "xfce4" ]]; then \
-    apt install -y xfce4 lightdm xorg firefox-esr network-manager-gnome gvfs-backends \
+    apt install -y xfce4 lightdm xorg firefox-esr network-manager-gnome gvfs-backends pulseaudio pulseaudio-module-bluetooth blueman \
         && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y xfce4 lightdm xorg firefox-esr xfce4-goodies lightdm-gtk-greeter-settings network-manager-gnome \
+    apt install --install-suggests -y xfce4 lightdm xorg firefox-esr xfce4-goodies lightdm-gtk-greeter-settings network-manager-gnome gvfs-backends pulseaudio pulseaudio-module-bluetooth blueman \
         ; fi \
     ; fi
 RUN if [[ $DESKTOP == "gnome" ]]; then \
