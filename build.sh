@@ -10,7 +10,6 @@ usage() {
     echo "  -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)"
     echo "  -d, --desktop DESKTOP           Choose the desktop environment."
     echo "                                  (none/xfce4/gnome/cinnamon/lxqt/lxde/unity/budgie/kde)"
-    echo "  -a, --additional ADDITIONAL     Choose whether to install additional software (yes/no)"
     echo "                                  This only has an effect in kombination with -d or --desktop"
     echo "  -u, --username USERNAME         Enter the username for the sudo user"
     echo "  -p, --password PASSWORD         Enter the password for the sudo user"
@@ -34,7 +33,6 @@ while [[ "$#" -gt 0 ]]; do
         -h|--help) usage;;
         -s|--suite) SUITE="$2"; shift ;;
         -d|--desktop) DESKTOP="$2"; shift ;;
-        -a|--additional) ADDITIONAL="$2"; shift ;;
         -u|--username) USERNAME="$2"; shift ;;
         -p|--password) PASSWORD="$2"; shift ;;
         -i|--interactive) INTERACTIVE="$2"; shift ;;
@@ -55,7 +53,7 @@ rm config/rootfs_size.txt
 echo ""
 clear
 # Check if arguments are missing
-if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ]; then
+if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$INTERACTIVE" ]; then
 clear
 echo "Choose the Debian Suite:"
 echo ""
@@ -120,22 +118,6 @@ elif [[ "$choice" -eq 9 ]]; then
     echo "DESKTOP=kde" >> .config
 fi
 
-if [[ "$choice" != 0 ]]; then
-	clear
-	echo "Do you want to install additional software?"
-	echo ""
-	echo "1. yes"
-	echo "2. no"
-	echo ""
-	read -p "Enter the number of your choice: " choice2
-	if [[ "$choice2" -eq 1 ]]; then
-	    echo "ADDITIONAL=yes" >> .config
-	else
-	    echo "ADDITIONAL=no" >> .config
-	fi
-else
-	echo "ADDITIONAL=no" >> .config
-fi
 clear
 echo "Let's create a sudo user..."
 echo ""
@@ -169,9 +151,6 @@ while IFS='=' read -r key value; do
         DESKTOP)
             DESKTOP="$value"
             ;;
-        ADDITIONAL)
-            ADDITIONAL="$value"
-            ;;
         USERNAME)
             USERNAME="$value"
             ;;
@@ -191,7 +170,6 @@ fi
 echo "------------------------------"
 echo "SUITE="$SUITE
 echo "DESKTOP="$DESKTOP
-echo "ADDITIONAL="$ADDITIONAL
 echo "USERNAME="$USERNAME
 echo "PASSWORD="$PASSWORD
 echo "INTERACTIVE="$INTERACTIVE
@@ -240,7 +218,9 @@ if [[ "$BUILD" == "yes" ]]; then
     echo "Building Docker image..."
     sleep 1
     docker rmi debian:finest
-    docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "ADDITIONAL="$ADDITIONAL --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
+    docker kill debiancontainer
+    docker rm debiancontainer
+    docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
     
     docker kill debiancontainer
     docker rm debiancontainer
