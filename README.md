@@ -6,6 +6,7 @@ I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
     - Fixed some issues with the Dockerfile
     - Added isntallation of ZSH with features
     - RW mode for qemu only to configure the display(standard is ro)
+    - Added start of an interactive shell inside the build container
 #####################################################################################
 # This script builds SD-Card images for the Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
