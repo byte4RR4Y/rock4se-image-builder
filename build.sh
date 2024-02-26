@@ -14,6 +14,7 @@ usage() {
     echo "                                  This only has an effect in kombination with -d or --desktop"
     echo "  -u, --username USERNAME         Enter the username for the sudo user"
     echo "  -p, --password PASSWORD         Enter the password for the sudo user"
+    echo "  -i, --interactive               Start an interactive shell inside the container"
     echo "  -b                              Build the image with the specified configuration without asking"
     echo "-------------------------------------------------------------------------------------------------"
     echo "For example: $0 -s sid -d none -a no -u USERNAME123 -p PASSWORD123 -b"
@@ -36,6 +37,7 @@ while [[ "$#" -gt 0 ]]; do
         -a|--additional) ADDITIONAL="$2"; shift ;;
         -u|--username) USERNAME="$2"; shift ;;
         -p|--password) PASSWORD="$2"; shift ;;
+        -i|--interactive) INTERACTIVE="$2"; shift ;;
         -b) BUILD="yes" ;;
         *) echo "Unknown parameter passed: $1"; usage ;;
     esac
@@ -145,6 +147,20 @@ read -p "Enter Password: " choice
 
     echo "PASSWORD=$choice" >> .config
 clear
+
+clear
+echo "Do you want to have an interactive shell inside the Docker container?"
+echo ""
+echo " 1. yes"
+echo " 2. no"
+echo ""
+read -p "Enter the number of your choice: " choice
+if [[ "$choice" -eq 1 ]]; then
+    echo "INTERACTIVE=yes" >> .config
+elif [[ "$choice" -eq 2 ]]; then
+    echo "INTERACTIVE=no" >> .config
+fi
+
 while IFS='=' read -r key value; do
     case "$key" in
     	SUITE)
@@ -162,6 +178,9 @@ while IFS='=' read -r key value; do
         PASSWORD)
             PASSWORD="$value"
             ;;
+        INTERACTIVE)
+            INTERACTIVE="$value"
+            ;;
         *)
             ;;
     esac
@@ -175,6 +194,7 @@ echo "DESKTOP="$DESKTOP
 echo "ADDITIONAL="$ADDITIONAL
 echo "USERNAME="$USERNAME
 echo "PASSWORD="$PASSWORD
+echo "INTERACTIVE="$INTERACTIVE
 echo "------------------------------"
 # Proceed with building image if -b option provided or ask for confirmation
 if [[ "$BUILD" == "yes" ]]; then
@@ -209,6 +229,9 @@ if [[ "$BUILD" == "yes" ]]; then
             PASSWORD)
                 PASSWORD="$value"
                 ;;
+            INTERACTIVE)
+                INTERACTIVE="$value"
+                ;;
             *)
                 ;;
         esac
@@ -222,7 +245,13 @@ if [[ "$BUILD" == "yes" ]]; then
     docker kill debiancontainer
     docker rm debiancontainer
 
-    docker run --platform linux/arm64/v8 -dit --rm --name debiancontainer debian:finest /bin/bash
+    docker run --platform linux/arm64/v8 -dit --name debiancontainer debian:finest /bin/bash  
+
+    if [[ "$INTERACTIVE" == "yes" ]]; then
+        docker attach debiancontainer
+        docker start debiancontainer       
+    fi
+    
     docker cp debiancontainer:/rootfs_size.txt config/
     ROOTFS=.rootfs.img
     rootfs_size=$(cat config/rootfs_size.txt)
@@ -252,5 +281,9 @@ if [[ "$BUILD" == "yes" ]]; then
         echo "Configuring the display manager..."
         ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
     fi
-    echo "YOUR BUILD IS FINISHED"
+    if [ -e "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" ]; then
+        echo "BUILD WAS SUCCESSFULL!"
+    else
+        echo "BUILD WAS NOT SEUCCESSFULL"
+    fi
 fi
