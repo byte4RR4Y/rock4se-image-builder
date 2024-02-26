@@ -6,7 +6,7 @@ I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
     - Fixed some issues with the Dockerfile
     - Added isntallation of ZSH with features
     - RW mode for qemu only to configure the display(standard is ro)
-    - Added start of an interactive shell inside the build container
+    - Added an option for an interactive shell inside the build container
       not yet supported by the gui
     - Fixed issues with some Desktop installations
 #####################################################################################
