@@ -62,7 +62,7 @@ You will find your image in the output folder.
   - cinnamon
   - lxqt
   - lxde
-  - unity(did not work at the moment)
+  - unity
   - budgie
   - kde plasma
 
