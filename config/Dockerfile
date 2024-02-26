@@ -16,7 +16,7 @@ SHELL ["/bin/bash", "-c"]
 RUN apt update -y
 
 RUN apt update -y && apt upgrade -y && apt install -y apt-utils dialog aptitude
-RUN aptitude install -y '?priority(required)' '?priority(important)' '?priority(standard)' nano wget curl sudo gpg gpg-agent network-manager zip unzip e2fsprogs
+RUN aptitude install -y '?priority(required)' '?priority(important)' '?priority(standard)' nano wget curl sudo gpg gpg-agent network-manager zip unzip e2fsprogs git zsh zsh-autosuggestions zsh-syntax-highlighting
 
 COPY config/apt-packages.txt /root
 RUN apt update -y
@@ -85,6 +85,14 @@ RUN apt update -y
 RUN useradd -m -s /bin/bash ${USERNAME}
 RUN echo "${PASSWORD}:${PASSWORD}" | chpasswd
 RUN usermod -aG sudo ${USERNAME}
+COPY config/.zshrc /home/${USERNAME}
+
+COPY config/.zshrc /home/${USERNAME}
+RUN chown ${USERNAME}:${USERNAME} /home/${USERNAME}/.zshrc
+RUN cp /home/${USERNAME}/.zshrc /root
+RUN chown root:root /root/.zshrc
+RUN chsh -s /bin/zsh ${USERNAME}
+RUN chsh -s /bin/zsh root
 
 RUN echo "root=LABEL=rootfs rw splash" > /etc/kernel/cmdline
 
@@ -93,26 +101,7 @@ RUN apt install -y wireless-tools net-tools inetutils* initramfs-tools radxa-fir
 RUN apt install -y linux-image-arm64 linux-headers-arm64
 RUN touch /etc/configboot
 
-RUN echo "#! /bin/bash" > /etc/rc.local && \
-    echo "" >> /etc/rc.local && \
-    echo "if [ -e /etc/configboot ]; then" >> /etc/rc.local && \
-    echo "	hostnamectl set-hostname rock4se" >> /etc/rc.local && \
-    echo "	chmod u+s /usr/bin/sudo" >> /etc/rc.local && \
-    echo "	dpkg-reconfigure lightdm" >> /etc/rc.local && \
-    echo "	dpkg-reconfigure sddm" >> /etc/rc.local && \
-    echo "	dpkg-reconfigure gdm3" >> /etc/rc.local && \
-    echo "	dpkg-reconfigure xorg" >> /etc/rc.local && \
-    echo "	dpkg-reconfigure xinit" >> /etc/rc.local && \
-    echo "	rm /etc/configboot" >> /etc/rc.local && \
-    echo "	touch /etc/firstboot" >> /etc/rc.local && \
-    echo "	poweroff" >> /etc/rc.local && \
-    echo "fi" >> /etc/rc.local && \
-    echo "if [ -e /etc/firstboot ]; then" >> /etc/rc.local && \
-    echo "	resize2fs /dev/mmcblk1p2" >> /etc/rc.local && \
-    echo "  rm /etc/firstboot" >> /etc/rc.local && \
-    echo "fi" >> /etc/rc.local && \
-    echo "" >> /etc/rc.local && \
-    echo "exit 0" >> /etc/rc.local
+COPY config/rc.local /etc
 
 RUN chmod +x /etc/rc.local
 
