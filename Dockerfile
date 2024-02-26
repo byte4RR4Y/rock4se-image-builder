@@ -107,4 +107,4 @@ RUN chmod +x /etc/rc.local
 
 RUN apt autoremove -y && apt autoclean
 
-RUN echo $(($(du -s -m --exclude=/proc / | awk '{print $1}'))) > /rootfs_size.txt
+RUN echo $(($(du -s -m --exclude=/proc --exclude=/sys --exclude=/dev / | awk '{print $1}'))) > /rootfs_size.txt
