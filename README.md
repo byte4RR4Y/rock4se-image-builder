@@ -84,7 +84,7 @@ Type './build.sh -h'
 
 For example to build Debian testing with XFCE without additional software:
 ---------------------------------------------------
-     ./build -s testing -d xfce4 -a no -u debian -p 123456 -b
+     ./build -s testing -d xfce4 -a no -u debian -p 123456 -i no -b
 ---------------------------------------------------
 
 
