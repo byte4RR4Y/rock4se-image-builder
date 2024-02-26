@@ -2,6 +2,11 @@
 
 I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
 #####################################################################################
+## Changes
+    - Fixed some issues with the Dockerfile
+    - Added isntallation of ZSH with features
+    - RW mode for qemu onli to configure the display(standard is ro)
+#####################################################################################
 # This script builds SD-Card images for the Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
     - Installing the Kernel.
