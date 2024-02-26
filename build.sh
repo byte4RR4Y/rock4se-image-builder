@@ -145,7 +145,6 @@ read -p "Enter Password: " choice
 
     echo "PASSWORD=$choice" >> .config
 clear
-echo "Writing '.config'..."
 while IFS='=' read -r key value; do
     case "$key" in
     	SUITE)
@@ -217,9 +216,12 @@ if [[ "$BUILD" == "yes" ]]; then
 
     echo "Building Docker image..."
     sleep 1
+    docker rmi debian:finest
     docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "ADDITIONAL="$ADDITIONAL --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
+    
     docker kill debiancontainer
     docker rm debiancontainer
+
     docker run --platform linux/arm64/v8 -dit --rm --name debiancontainer debian:finest /bin/bash
     docker cp debiancontainer:/rootfs_size.txt config/
     ROOTFS=.rootfs.img
@@ -248,7 +250,7 @@ if [[ "$BUILD" == "yes" ]]; then
     rm -rf .loop/root .rootfs.img .rootfs.tar "${ROOTFS}.gz"
     if [ "$DESKTOP" != "CLI" ]; then
         echo "Configuring the display manager..."
-        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" nofullscreen
+        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
     fi
     echo "YOUR BUILD IS FINISHED"
 fi
