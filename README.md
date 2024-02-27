@@ -7,7 +7,6 @@ I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
     - Added isntallation of ZSH with features
     - RW mode for qemu only to configure the display(standard is ro)
     - Added an option for an interactive shell inside the build container
-      not yet supported by the gui
     - Fixed issues with some Desktop installations
     - Removed installing otion for additional software(because of the image size)
     - Added qemu TPM emulation
