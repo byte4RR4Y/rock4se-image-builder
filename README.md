@@ -11,6 +11,7 @@ I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
     - Fixed issues with some Desktop installations
     - Removed installing otion for additional software(because of the image size)
     - Added qemu TPM emulation
+    - Uploaded .zshrc file (Sorry I forgot it)
 #####################################################################################
 # This script builds SD-Card images for the Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
