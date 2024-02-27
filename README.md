@@ -1,4 +1,4 @@
-# rock4se-image-builder
+# rock4se-image-builder v1.0
 
 I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
 #####################################################################################
