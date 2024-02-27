@@ -38,8 +38,8 @@ func main() {
 	layout.AddWidget(comboBox2, 0, 0)
 
 	// Checkbox für zusätzliche Software erstellen
-	additionalSoftwareCheckBox := widgets.NewQCheckBox2("Additional Software", nil)
-	layout.AddWidget(additionalSoftwareCheckBox, 0, 0)
+	interactiveShellCheckBox := widgets.NewQCheckBox2("Interactive Shell", nil)
+	layout.AddWidget(interactiveShellCheckBox, 0, 0)
 
 	// Texteingabefeld für Benutzernamen erstellen
 	usernameLabel := widgets.NewQLabel2("USERNAME:", nil, 0)
@@ -63,15 +63,15 @@ func main() {
 		// Ausgewählte Werte abrufen
 		suite := comboBox1.CurrentText()
 		desktop := comboBox2.CurrentText()
-		additionalSoftware := "no"
-		if additionalSoftwareCheckBox.IsChecked() {
-			additionalSoftware = "yes"
+		interactiveShell := "no"
+		if interactiveShellCheckBox.IsChecked() {
+			interactiveShell = "yes"
 		}
 		username := usernameLineEdit.Text()
 		password := passwordLineEdit.Text()
 
 		// build.sh-Skript ausführen
-		cmd := exec.Command("xfce4-terminal", "--title=Image-Builder", "-e", fmt.Sprintf("sudo ./build.sh -s %s -d %s -a %s -u %s -p %s -b", suite, desktop, additionalSoftware, username, password))
+		cmd := exec.Command("xfce4-terminal", "--title=Image-Builder", "-e", fmt.Sprintf("sudo ./build.sh -s %s -d %s -i %s -u %s -p %s -b", suite, desktop, interactiveShell, username, password))
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err := cmd.Run()
