@@ -1,4 +1,4 @@
-# rock4se-image-builder >>FIXED VERSION WITH GUI<<
+# rock4se-image-builder
 
 I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
 #####################################################################################
