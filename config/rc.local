@@ -11,7 +11,7 @@ if [ -e /etc/configboot ]; then
   dpkg-reconfigure gdm3
   rm /etc/configboot
   touch /etc/firstboot
-  poweroff
+  reboot
 fi
 
 if [ -e /etc/firstboot ]; then
