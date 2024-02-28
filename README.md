@@ -1,7 +1,7 @@
 # rock4se-image-builder v1.3
 ## With Linux Kernel 6.6.x (works great)
 ### I'm working on compilation of latest linux kernel
-### but i still have some driver problems, pleas be patient
+### but i still have some driver problems, please be patient
 
 ### PLEASE report any issues!
 #####################################################################################
