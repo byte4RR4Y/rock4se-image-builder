@@ -33,10 +33,10 @@ OR START Image-builder-GUI_amd64
 
 You will find your image in the output folder.
 
-# <<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #      DO NOT RUN QEMU IN RW MODE OTHERWISE THE
 # AUTO RESIZE ROOT FILESYSTEM ON FIRST BOOT WILL FAIL
-# <<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # Run qemu emulation of your  build
 
 ## For example:
