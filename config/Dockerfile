@@ -12,7 +12,6 @@ ENV PASSWORD=$PASSWORD
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN sed -i '/^Components:/ s/$/ contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
-SHELL ["/bin/bash", "-c"]
 RUN apt update -y
 
 RUN apt update -y && apt upgrade -y && apt install -y apt-utils dialog aptitude
@@ -24,54 +23,30 @@ RUN xargs apt install -y < /root/apt-packages.txt
 
 RUN if [[ $DESKTOP == "xfce4" ]]; then \
     apt install -y xfce4 lightdm xorg firefox-esr network-manager-gnome gvfs-backends pulseaudio pulseaudio-module-bluetooth blueman \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y xfce4 lightdm xorg firefox-esr xfce4-goodies lightdm-gtk-greeter-settings network-manager-gnome gvfs-backends pulseaudio pulseaudio-module-bluetooth blueman \
-        ; fi \
     ; fi
 RUN if [[ $DESKTOP == "gnome" ]]; then \
     apt install -y gdm* gnome-shell \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y gnome-shell-extensions gnome-tweaks gnome-software gnome-contacts gnome-screenshot gnome-software \
-        ; fi \
     ; fi
 RUN if [[ $DESKTOP == "mate" ]]; then \
     apt install -y mate-desktop-environment-core lightdm xorg firefox-esr \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y mate-desktop-environment-core lightdm xorg firefox-esr \
-        ; fi \
     ; fi
 RUN if [[ $DESKTOP == "cinnamon" ]]; then \
     apt install -y cinnamon-common cinnamon-desktop-environment lightdm xorg firefox-esr \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y cinnamon-common cinnamon-desktop-environment lightdm xorg firefox-esr \
-        ; fi \
     ; fi
 RUN if [[ $DESKTOP == "lxqt" ]]; then \
     apt install -y lightdm xorg lxqt-core  \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y lightdm xorg lxqt-core  \
-        ; fi \
     ; fi
 RUN if [[ $DESKTOP == "lxde" ]]; then \
     apt install -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y lxde* lightdm xorg firefox-esr mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software \
-        ; fi \
     ; fi
 RUN if [[ $DESKTOP == "unity" ]]; then \
     wget -qO - https://hub.unity3d.com/linux/keys/public | gpg --dearmor | sudo tee /usr/share/keyrings/Unity_Technologies_ApS.gpg > /dev/null && sh -c 'echo "deb [signed-by=/usr/share/keyrings/Unity_Technologies_ApS.gpg] https://hub.unity3d.com/linux/repos/deb stable main" > /etc/apt/sources.list.d/unityhub.list' && apt update && apt-get install unityhub mintstick gimp transmission winff libreoffice ufw gufw synaptic gnome-software -y \
     ; fi
 RUN if [[ $DESKTOP == "budgie" ]]; then \
     apt install -y budgie-desktop \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y budgie-desktop \
-        ; fi \
     ; fi
 RUN if [[ $DESKTOP == "kde" ]]; then \
     apt install -y sddm kde-plasma-desktop xorg \
-        && if [[ $ADDITIONAL == "yes" ]]; then \
-    apt install --install-suggests -y sddm kde-full xorg \
-        ; fi \
     ; fi
 
 
@@ -96,9 +71,8 @@ RUN chsh -s /bin/zsh root
 
 RUN echo "root=LABEL=rootfs rw splash" > /etc/kernel/cmdline
 
-RUN apt install -y wireless-tools net-tools inetutils* initramfs-tools radxa-firmware firmware-brcm80211 network-manager tar zip unzip bzip2 binutils u-boot-menu firmware-linux firmware-linux-nonfree radxa-firmware pulseaudio pulseaudio-module-bluetooth ntpsec locales
+RUN apt install -y kmod wireless-tools net-tools inetutils* initramfs-tools radxa-firmware firmware-brcm80211 network-manager tar zip unzip bzip2 binutils u-boot-menu firmware-linux firmware-linux-nonfree radxa-firmware pulseaudio pulseaudio-module-bluetooth ntpsec locales
 
-RUN apt install -y linux-image-arm64 linux-headers-arm64
 RUN touch /etc/configboot
 
 COPY config/rc.local /etc
