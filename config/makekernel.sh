@@ -1,5 +1,6 @@
 #! /bin/bash
 
+ARG=$1
 CWD=$PWD
 OUTDIR=${CWD}
 CPUS=$(($(nproc)))
