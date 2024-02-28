@@ -239,7 +239,7 @@ if [[ "$BUILD" == "yes" ]]; then
     docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
     docker exec debiancontainer bash -c 'rm -rf /kernel*.zip'
     docker exec debiancontainer bash -c 'rm /installkernel.sh'
-    docker exec debiancontainer bash -c 'echo "y" | apt install task-rock-4se -y'
+    docker exec debiancontainer bash -c 'echo "n" | apt install task-rock-4se -y'
     rm kernel-*.zip
     
     if [[ "$INTERACTIVE" == "yes" ]]; then
