@@ -1,5 +1,5 @@
 # rock4se-image-builder v1.3
-## With latest Linux Kernel!!!
+## With Linux Kernel 6.6.x !!!
 
 ### PLEASE report any issues!
 #####################################################################################
