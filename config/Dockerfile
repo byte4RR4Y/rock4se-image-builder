@@ -53,7 +53,7 @@ RUN echo "Package: linux-image-arm64 linux-headers-arm64" >> /etc/apt/preference
 RUN echo "Pin: release a=unstable" >> /etc/apt/preferences.d/kernel
 RUN echo "Pin-Priority: 999" >> /etc/apt/preferences.d/kernel
 RUN echo "Package: *" >> /etc/apt/preferences.d/kernel
-RUN echo "Pin: release a=stable" >> /etc/apt/preferences.d/kernel
+RUN echo "Pin: release n=${SUITE}" >> /etc/apt/preferences.d/kernel
 RUN echo "Pin-Priority: 998" >> /etc/apt/preferences.d/kernel
 RUN echo "deb http://deb.debian.org/debian unstable main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 RUN bash -c 'curl -L --output deb.deb "https://github.com/radxa-pkg/radxa-archive-keyring/releases/latest/download/radxa-archive-keyring_$(curl -L https://github.com/radxa-pkg/radxa-archive-keyring/releases/latest/download/VERSION)_all.deb"'
