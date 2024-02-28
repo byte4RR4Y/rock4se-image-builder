@@ -5,4 +5,6 @@ firmware-realtek
 firmware-brcm80211
 firmware-ath9k-htc
 firmware-atheros
-wireless-tools
+iw
+wireless-regdb
+
