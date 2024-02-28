@@ -217,7 +217,7 @@ if [[ "$BUILD" == "yes" ]]; then
 
 
     echo "0" > config/kernel_status
-    xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh" &
+    #xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh" &
     
     echo "Building Docker image..."
     sleep 1
