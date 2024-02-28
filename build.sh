@@ -215,6 +215,10 @@ if [[ "$BUILD" == "yes" ]]; then
         esac
     done < .config
 
+
+    echo "0" > config/kernel_status
+    xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh" &
+    
     echo "Building Docker image..."
     sleep 1
     docker rmi debian:finest
@@ -226,7 +230,19 @@ if [[ "$BUILD" == "yes" ]]; then
     docker rm debiancontainer
 
     docker run --platform linux/arm64/v8 -dit --name debiancontainer debian:finest /bin/bash  
-
+    echo "Waiting for Kernel compilation..."
+    while [[ "$(cat config/kernel_status)" != "1" ]]; do
+        sleep 2
+    done
+    docker cp kernel*.zip debiancontainer:/
+    docker cp config/installkernel.sh debiancontainer:/
+    docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
+    docker exec debiancontainer rm -rf kernel-*.zip
+    docker exec debiancontainer rm /installkernel.sh
+    rm kernel-*.zip
+    docker exec debiancontainer bash -c 'rm kernel*.zip'
+    docker exec debiancontainer bash -c 'rm installkernel.sh'
+    
     if [[ "$INTERACTIVE" == "yes" ]]; then
         docker attach debiancontainer
         docker start debiancontainer       
