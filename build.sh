@@ -226,21 +226,18 @@ if [[ "$BUILD" == "yes" ]]; then
     docker rm debiancontainer
     docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
     
-    docker kill debiancontainer
-    docker rm debiancontainer
-
-    docker run --platform linux/arm64/v8 -dit --name debiancontainer debian:finest /bin/bash  
+    docker run --platform=aarch64 -dit --name debiancontainer debian:finest /bin/bash  
     echo "Waiting for Kernel compilation..."
     #while [[ "$(cat config/kernel_status)" != "1" ]]; do
     #    sleep 2
     #done
-    docker cp kernel*.zip debiancontainer:/
-    docker cp config/installkernel.sh debiancontainer:/
-    docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
-    docker exec debiancontainer bash -c 'rm -rf /kernel*.zip'
-    docker exec debiancontainer bash -c 'rm /installkernel.sh'
-    docker exec debiancontainer bash -c 'echo "n" | apt install task-rock-4se -y'
-    rm kernel-*.zip
+    #docker cp kernel*.zip debiancontainer:/
+    #docker cp config/installkernel.sh debiancontainer:/
+    #docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
+    #docker exec debiancontainer bash -c 'rm -rf /kernel*.zip'
+    #docker exec debiancontainer bash -c 'rm /installkernel.sh'
+    #docker exec debiancontainer bash -c 'echo "n" | apt install task-rock-4se -y'
+    #rm kernel-*.zip
     
     if [[ "$INTERACTIVE" == "yes" ]]; then
         docker attach debiancontainer
