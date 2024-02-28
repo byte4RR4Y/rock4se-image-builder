@@ -3,8 +3,10 @@
 SDCARD=$1
 SCREEN=$2
 
-CPUS=$(nproc) 
-CPUS=$((CPUS > 8 ? 8 : CPUS))
+CPUS=$(($(nproc) / 2 ))
+
+
+
 
 mkdir -p /tmp/mytpm1
 swtpm socket --tpmstate dir=/tmp/mytpm1 --ctrl type=unixio,path=/tmp/mytpm1/swtpm-sock --tpm2 --log level=0 &
@@ -12,9 +14,9 @@ swtpm socket --tpmstate dir=/tmp/mytpm1 --ctrl type=unixio,path=/tmp/mytpm1/swtp
 if [ "$SCREEN" == "" ]; then
 sudo qemu-system-aarch64 \
   -M virt \
-  -cpu cortex-a72 \
+  -cpu cortex-a72 -smp $CPUS \
+  -cpu cortex-a53 -smp $CPUS \
   -m 2048 \
-  -smp $CPUS \
   -kernel "$(dirname "$SDCARD")/.qemu/"vmlinuz \
   -initrd "$(dirname "$SDCARD")/.qemu/"initrd.img \
   -drive if=none,file=${SDCARD},format=raw,id=disk \
@@ -32,9 +34,9 @@ sudo qemu-system-aarch64 \
   elif [ "$SCREEN" == "nofullscreen" ]; then
   sudo qemu-system-aarch64 \
   -M virt \
-  -cpu cortex-a72 \
+  -cpu cortex-a72 -smp $CPUS \
+  -cpu cortex-a53 -smp $CPUS \
   -m 2048 \
-  -smp $CPUS \
   -kernel "$(dirname "$SDCARD")/.qemu/"vmlinuz \
   -initrd "$(dirname "$SDCARD")/.qemu/"initrd.img \
   -drive if=none,file=${SDCARD},format=raw,id=disk \
@@ -51,9 +53,9 @@ sudo qemu-system-aarch64 \
 elif [ "$SCREEN" == "rw" ]; then
   sudo qemu-system-aarch64 \
   -M virt \
-  -cpu cortex-a72 \
+  -cpu cortex-a72 -smp $CPUS \
+  -cpu cortex-a53 -smp $CPUS \
   -m 2048 \
-  -smp $CPUS \
   -kernel "$(dirname "$SDCARD")/.qemu/"vmlinuz \
   -initrd "$(dirname "$SDCARD")/.qemu/"initrd.img \
   -drive if=none,file=${SDCARD},format=raw,id=disk \

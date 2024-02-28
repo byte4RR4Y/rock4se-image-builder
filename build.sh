@@ -276,8 +276,11 @@ if [[ "$BUILD" == "yes" ]]; then
     if [ "$DESKTOP" != "CLI" || "none" ]; then
         echo "Configuring the display manager..."
         ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
+    else
+    	./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
     fi
-    if [ -e "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" ]; then
+    filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img")
+    if [ $filesize -gt 1073741824 ]; then
         echo "BUILD WAS SUCCESSFULL!"
     else
         echo "BUILD WAS NOT SEUCCESSFULL"
