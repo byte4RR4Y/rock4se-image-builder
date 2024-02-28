@@ -231,9 +231,9 @@ if [[ "$BUILD" == "yes" ]]; then
 
     docker run --platform linux/arm64/v8 -dit --name debiancontainer debian:finest /bin/bash  
     echo "Waiting for Kernel compilation..."
-    while [[ "$(cat config/kernel_status)" != "1" ]]; do
-        sleep 2
-    done
+    #while [[ "$(cat config/kernel_status)" != "1" ]]; do
+    #    sleep 2
+    #done
     docker cp kernel*.zip debiancontainer:/
     docker cp config/installkernel.sh debiancontainer:/
     docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
