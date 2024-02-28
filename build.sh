@@ -217,7 +217,7 @@ if [[ "$BUILD" == "yes" ]]; then
 
 
     echo "0" > config/kernel_status
-    #xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh" &
+    ##xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh" &
     
     echo "Building Docker image..."
     sleep 1
@@ -226,18 +226,24 @@ if [[ "$BUILD" == "yes" ]]; then
     docker rm debiancontainer
     docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
     
-    docker run --platform=aarch64 -dit --name debiancontainer debian:finest /bin/bash  
+    docker kill debiancontainer
+    docker rm debiancontainer
+
+    docker run --platform linux/arm64/v8 -dit --name debiancontainer debian:finest /bin/bash  
     echo "Waiting for Kernel compilation..."
-    #while [[ "$(cat config/kernel_status)" != "1" ]]; do
-    #    sleep 2
-    #done
-    #docker cp kernel*.zip debiancontainer:/
-    #docker cp config/installkernel.sh debiancontainer:/
-    #docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
-    #docker exec debiancontainer bash -c 'rm -rf /kernel*.zip'
-    #docker exec debiancontainer bash -c 'rm /installkernel.sh'
-    #docker exec debiancontainer bash -c 'echo "n" | apt install task-rock-4se -y'
-    #rm kernel-*.zip
+    ##while [[ "$(cat config/kernel_status)" != "1" ]]; do
+    ##    sleep 2
+    ##done
+    docker cp kernel*.zip debiancontainer:/
+    docker cp config/installkernel.sh debiancontainer:/
+    docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
+    docker exec debiancontainer bash -c 'rm -rf /kernel*.zip'
+    docker exec debiancontainer bash -c 'rm /installkernel.sh'
+    docker exec debiancontainer bash -c 'echo "n" | apt install task-rock-4se -y'
+    docker exec debiancontainer bash -c 'apt install -y radxa-firmware firmware-brcm80211/bookworm firmware-realtek firmware-atheros firmware-ath9k-htc'
+    docker exec debiancontainer bash -c 'xargs apt install -y < /root/apt-packages.txt'
+    docker exec debiancontainer bash -c 'rm /root/apt-packages.txt'
+    rm kernel-*.zip
     
     if [[ "$INTERACTIVE" == "yes" ]]; then
         docker attach debiancontainer
@@ -248,7 +254,7 @@ if [[ "$BUILD" == "yes" ]]; then
     ROOTFS=.rootfs.img
     rootfs_size=$(cat config/rootfs_size.txt)
     echo "Creating an empty rootfs image..."
-    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 1536)) status=progress
+    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 650)) status=progress
     
     mkfs.ext4 -L rootfs $ROOTFS -F
     mkfs.ext4 ${ROOTFS} -L rootfs -F
@@ -267,16 +273,17 @@ if [[ "$BUILD" == "yes" ]]; then
     resize2fs -M ${ROOTFS}
     gzip ${ROOTFS}
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
-    zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
+	RELEASE=$(cat config/release.txt)
+    zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img"
     chown -R ${SUDO_USER}:${SUDO_USER} output/
-    rm -rf .loop/root .rootfs.img .rootfs.tar "${ROOTFS}.gz"
+    rm -rf .loop/root .rootfs.img .loop/ .rootfs.tar "${ROOTFS}.gz"
     if [ "$DESKTOP" != "CLI" || "none" ]; then
         echo "Configuring the display manager..."
-        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
+        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
     else
-    	./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
+    	./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
     fi
-    filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img")
+    filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img")
     if [ $filesize -gt 1073741824 ]; then
         echo "BUILD WAS SUCCESSFULL!"
     else
