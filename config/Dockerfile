@@ -73,7 +73,7 @@ RUN echo "root=LABEL=rootfs rw splash" > /etc/kernel/cmdline
 
 RUN apt install -y kmod wireless-tools net-tools inetutils* initramfs-tools radxa-firmware firmware-brcm80211 network-manager tar zip unzip bzip2 binutils u-boot-menu firmware-linux firmware-linux-nonfree radxa-firmware pulseaudio pulseaudio-module-bluetooth ntpsec locales
 RUN touch /etc/configboot
-
+RUN apt install -y linux-image-arm64
 COPY config/rc.local /etc
 
 RUN chmod +x /etc/rc.local
