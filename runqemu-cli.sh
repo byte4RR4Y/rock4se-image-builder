@@ -7,7 +7,7 @@ CPUS=$(($(nproc) / 2 ))
 
 
 
-
+#-device usb-host,hostbus=5,hostport=1
 mkdir -p /tmp/mytpm1
 swtpm socket --tpmstate dir=/tmp/mytpm1 --ctrl type=unixio,path=/tmp/mytpm1/swtpm-sock --tpm2 --log level=0 &
 
