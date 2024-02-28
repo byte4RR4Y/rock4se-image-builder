@@ -1,10 +1,9 @@
 #! /bin/bash
 
-ARG=$1
 CWD=$PWD
 OUTDIR=${CWD}
 CPUS=$(($(nproc)))
-if [ "$ARG" == "start" ]; then
+
 git clone --depth=1 https://github.com/torvalds/linux
 cd linux
 CONFIG_FILE="arch/arm64/configs/defconfig"
@@ -96,5 +95,5 @@ mv "${KERNELDIR}/${ARCHIVE}" "${OUTDIR}"
 rm -rf "${KERNELDIR}"
 cd ${CWD}
 rm -rf linux
-fi
+
 echo "1" > ${CWD}/config/kernel_status
