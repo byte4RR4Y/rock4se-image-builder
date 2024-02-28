@@ -12,6 +12,7 @@ ENV PASSWORD=$PASSWORD
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN sed -i '/^Components:/ s/$/ contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+SHELL ["/bin/bash", "-c"]
 RUN apt update -y
 
 RUN apt update -y && apt upgrade -y && apt install -y apt-utils dialog aptitude
