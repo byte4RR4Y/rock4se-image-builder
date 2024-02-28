@@ -12,6 +12,7 @@ ENV PASSWORD=$PASSWORD
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN sed -i '/^Components:/ s/$/ contrib non-free non-free-firmware/' /etc/apt/sources.list.d/debian.sources
+SHELL ["/bin/bash", "-c"]
 RUN apt update -y
 
 RUN apt update -y && apt upgrade -y && apt install -y apt-utils dialog aptitude
@@ -72,8 +73,9 @@ RUN chsh -s /bin/zsh root
 RUN echo "root=LABEL=rootfs rw splash" > /etc/kernel/cmdline
 
 RUN apt install -y kmod wireless-tools net-tools inetutils* initramfs-tools radxa-firmware firmware-brcm80211 network-manager tar zip unzip bzip2 binutils u-boot-menu firmware-linux firmware-linux-nonfree radxa-firmware pulseaudio pulseaudio-module-bluetooth ntpsec locales
+
 RUN touch /etc/configboot
-RUN apt install -y linux-image-arm64
+
 COPY config/rc.local /etc
 
 RUN chmod +x /etc/rc.local
