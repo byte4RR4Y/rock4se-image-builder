@@ -19,9 +19,8 @@ I'm currently testing all the builds(a lot of work!) PLEASE report any issues!
     - Installing the Kernel.
     - Flash the u-boot bootloader(2024-01) and the root filesystem to the SD-Card image.
 
-# Installation:
+# Installation: Clone this repository and...
 ----------------------
-    git clone [https://github.com/byte4RR4Y/rock4se-builder.git](https://github.com/byte4RR4Y/rock4se-image-builder.git)
     cd rock4se-image-builder
     chmod +x install.sh
     sudo ./install.sh
