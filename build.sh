@@ -237,11 +237,10 @@ if [[ "$BUILD" == "yes" ]]; then
     docker cp kernel*.zip debiancontainer:/
     docker cp config/installkernel.sh debiancontainer:/
     docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
-    docker exec debiancontainer rm -rf kernel-*.zip
-    docker exec debiancontainer rm /installkernel.sh
+    docker exec debiancontainer bash -c 'rm -rf /kernel*.zip'
+    docker exec debiancontainer bash -c 'rm /installkernel.sh'
+    docker exec debiancontainer bash -c 'echo "y" | apt install task-rock-4se -y'
     rm kernel-*.zip
-    docker exec debiancontainer bash -c 'rm kernel*.zip'
-    docker exec debiancontainer bash -c 'rm installkernel.sh'
     
     if [[ "$INTERACTIVE" == "yes" ]]; then
         docker attach debiancontainer
@@ -272,8 +271,9 @@ if [[ "$BUILD" == "yes" ]]; then
     gzip ${ROOTFS}
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
     zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
+    chown -R ${SUDO_USER}:${SUDO_USER} output/
     rm -rf .loop/root .rootfs.img .rootfs.tar "${ROOTFS}.gz"
-    if [ "$DESKTOP" != "CLI" ]; then
+    if [ "$DESKTOP" != "CLI" || "none" ]; then
         echo "Configuring the display manager..."
         ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
     fi
