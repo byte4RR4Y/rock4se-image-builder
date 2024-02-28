@@ -1,9 +1,6 @@
 #! /bin/bash
 
-root_device=$(findmnt / --noheadings --output SOURCE)
-
 if [ -e /etc/configboot ]; then
-
   hostnamectl set-hostname rock4se
   chmod u+s /usr/bin/sudo
   dpkg-reconfigure lightdm
@@ -15,7 +12,7 @@ if [ -e /etc/configboot ]; then
 fi
 
 if [ -e /etc/firstboot ]; then
-  resize2fs $root_device
+  /etc/init.d/resize2fs start
   rm /etc/firstboot
 fi
 exit 0
