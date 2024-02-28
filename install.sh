@@ -6,7 +6,7 @@ if [ "$UID" -ne 0 ]; then
     exit 1
 fi
 
-apt update -y && apt install -y git docker.io apparmor qemu-user-static binfmt-support qemu-user qemu-utils qemu-system-aarch64 u-boot-qemu golang swtpm
+apt update -y && apt install -y git bc bison flex libssl-dev make libc6-dev libncurses5-dev crossbuild-essential-arm64 docker.io apparmor qemu-user-static binfmt-support qemu-user qemu-utils qemu-system-aarch64 u-boot-qemu golang swtpm
 go mod init Image-builder-GUI_amd64.go
 go mod tidy
 chmod +x ./*
