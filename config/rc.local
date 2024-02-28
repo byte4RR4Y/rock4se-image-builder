@@ -7,11 +7,11 @@ if [ -e /etc/configboot ]; then
   dpkg-reconfigure sddm
   dpkg-reconfigure gdm3
   rm /etc/configboot
-  touch /etc/firstboot
-  reboot
+  touch /etc/default/FIRSTBOOT
+  poweroff
 fi
 
-if [ -e /etc/firstboot ]; then
+if [ -e /etc/default/FIRSTBOOT ]; then
   /etc/init.d/resize2fs start
   rm /etc/firstboot
 fi
