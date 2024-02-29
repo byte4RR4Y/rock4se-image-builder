@@ -45,8 +45,6 @@ You will find your image in the output folder.
     ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708569271/Debian-experimental-xfce4.img
     ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708569271/Debian-experimental-xfce4.img nofullscreen
 ---------------------------------------------------
-'./runqemu-desktop.sh IMAGENAME' boots automaticly 'rw', because it configures the display correctly.
-
 './runqemu-desktop.sh IMAGENAME nofullscreen' is booting the image in window-mode
 
 # Adding custom packages to install
