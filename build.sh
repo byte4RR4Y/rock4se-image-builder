@@ -248,6 +248,8 @@ if [[ "$BUILD" == "yes" ]]; then
         sleep 2
     done
     rm config/kernel_status
+    docker cp config/resizeroot debiancontainer:/usr/local/bin
+    docker exec debiancontainer bash -c 'chmod +x /usr/local/bin/resizeroot'
     docker cp kernel*.zip debiancontainer:/
     docker cp config/installkernel.sh debiancontainer:/
     docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
