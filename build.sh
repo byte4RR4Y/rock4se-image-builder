@@ -55,7 +55,7 @@ echo ""
 # Check if arguments are missing
 if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$INTERACTIVE" ]; then
 ##########################################################################################################################
-whiptail --title "Menu" --menu "Choose an option" 15 60 4 \
+whiptail --title "Menu" --menu "Choose a Debian Suite" 40 40 6 \
 "1" "testing" \
 "2" "experimental" \
 "3" "trixie" \
@@ -89,7 +89,7 @@ case $choice in
 esac
 rm choice.txt
 ##########################################################################################################################
-whiptail --title "Menu" --menu "Choose an option" 15 60 4 \
+whiptail --title "Menu" --menu "Choose a Desktop option" 20 65 10 \
 "1" "none" \
 "2" "xfce" \
 "3" "gnome" \
@@ -231,17 +231,17 @@ if [[ "$BUILD" == "yes" ]]; then
         esac
     done < .config
 
-
+##########################################################################################################################
     echo "0" > config/kernel_status
     xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh" &
-    
+##########################################################################################################################    
     echo "Building Docker image..."
     sleep 1
     docker rmi debian:finest
     docker kill debiancontainer
     docker rm debiancontainer
     docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
-    
+##########################################################################################################################    
     docker run --platform=aarch64 -dit --name debiancontainer debian:finest /bin/bash  
     echo "Waiting for Kernel compilation..."
     while [[ "$(cat config/kernel_status)" != "1" ]]; do
@@ -254,48 +254,52 @@ if [[ "$BUILD" == "yes" ]]; then
     docker exec debiancontainer bash -c 'rm /installkernel.sh'
     docker exec debiancontainer bash -c 'u-boot-update'
     rm kernel-*.zip
-    
+##########################################################################################################################    
     if [[ "$INTERACTIVE" == "yes" ]]; then
         docker attach debiancontainer
         docker start debiancontainer       
     fi
-    
+##########################################################################################################################    
     docker cp debiancontainer:/rootfs_size.txt config/
     ROOTFS=.rootfs.img
     rootfs_size=$(cat config/rootfs_size.txt)
     echo "Creating an empty rootfs image..."
-    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 1536)) status=progress
-    
+    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 512)) status=progress
     mkfs.ext4 -L rootfs $ROOTFS -F
     mkfs.ext4 ${ROOTFS} -L rootfs -F
     mkdir -p .loop/root
     mount ${ROOTFS} .loop/root
     docker export -o .rootfs.tar debiancontainer
     tar -xvf .rootfs.tar -C .loop/root
-    
+##########################################################################################################################    
     docker kill debiancontainer
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
     rm .loop/root/.dockerenv
+##########################################################################################################################
     cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
     cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
+##########################################################################################################################
     umount .loop/root
     e2fsck -f ${ROOTFS}
     resize2fs -M ${ROOTFS}
     gzip ${ROOTFS}
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
-    zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
+    RELEASE=$(cat config/release)
+    zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img"
     chown -R ${SUDO_USER}:${SUDO_USER} output/
-    rm -rf .loop/root .rootfs.img .rootfs.tar "${ROOTFS}.gz"
+    rm -rf .loop/ .rootfs.img .rootfs.tar "${ROOTFS}.gz"
+##########################################################################################################################
     if [ "$DESKTOP" != "CLI" || "none" ]; then
         echo "Configuring the display manager..."
-        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
+        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img" rw
     else
-    	  ./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
+    	  ./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img" rw
     fi
-    filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img")
+##########################################################################################################################
+    filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img")
     if [ $filesize -gt 1073741824 ]; then
-        echo "BUILD WAS SUCCESSFULL!"
+        echo "CONGRATULATION, BUILD WAS SUCCESSFULL!"
     else
-        echo "BUILD WAS NOT SEUCCESSFULL"
+        echo "SORRY, BUILD WAS NOT SUCCESSFULL"
     fi
 fi
