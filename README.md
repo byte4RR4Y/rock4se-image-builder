@@ -13,7 +13,7 @@
     - Added qemu TPM emulation
     - Uploaded .zshrc file (Sorry I forgot it)
     - Updated the gui
-    - Compile and install latest Kernel(!!!) CURRENTLY DISABLED BECAUSE OF MISSING WIFI/BT DRIVERS
+    - Compile and install latest Kernel !!! At the moment it's 6.8.0-rc6
 #####################################################################################
 # This script builds SD-Card images for the Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
