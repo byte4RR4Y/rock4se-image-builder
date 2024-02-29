@@ -79,6 +79,8 @@ RUN chmod +x /etc/init.d/resize2fs
 RUN touch /etc/configboot
 
 COPY config/rc.local /etc
+COPY config/kernelupdater.sh /boot
+RUN chmod +x /boot/kernelupdater.sh
 
 RUN chmod +x /etc/rc.local
 
