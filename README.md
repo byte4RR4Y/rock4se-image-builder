@@ -1,6 +1,6 @@
 # rock4se-image-builder v1.4
 ## With the latest Linux Kernel !!!
-For questions or suggestions unse the Discussions forum
+For questions or suggestions use the Discussions forum
 ### PLEASE report any issues!
 When you start your build just type 'sudo resizeroot' to expand root filesystem
 #####################################################################################
