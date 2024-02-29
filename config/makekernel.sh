@@ -39,8 +39,8 @@ fi
 chown "${REALUSER}:${REALUSER}" "${ARCHIVE}"
 cd ${CWD}/linux
 mv "${KERNELDIR}/${ARCHIVE}" "${OUTDIR}"
-#rm -rf "${KERNELDIR}"
+rm -rf "${KERNELDIR}"
 cd ${CWD}
-#rm -rf linux
+rm -rf linux
 
 echo "1" > ${CWD}/config/kernel_status
