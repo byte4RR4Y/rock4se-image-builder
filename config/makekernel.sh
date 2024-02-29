@@ -13,7 +13,7 @@ BUILD="$(sed -n 's|^.*\s\+\(\S\+\.\S\+\.\S\+\)\s\+Kernel Configuration$|\1|p' .c
 KERNELDIR="KERNEL-${BUILD}"
 mkdir -p "${KERNELDIR}"
 echo "${BUILD}" ${CWD}/config/release.txt
-make -j ${CPUS} KERNELRELEASE="${BUILD}" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image.gz modules dtbs
+make -j ${CPUS} KERNELRELEASE="${BUILD}" ARCH=arm64 CONFIG_BRCMUTIL=m CONFIG_BRCMFMAC=m CONFIG_ARCH_ROCKCHIP=y CROSS_COMPILE=aarch64-linux-gnu- Image.gz modules dtbs
 env PATH=$PATH make KERNELRELEASE="${BUILD}" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=${KERNELDIR} modules_install
 mkdir -p "${KERNELDIR}/boot/" "${KERNELDIR}/lib/linux-image-${BUILD}/rockchip/"
 echo "ffffffffffffffff B The real System.map is in the linux-image-<version>-dbg package" > "${KERNELDIR}/boot/System.map-${BUILD}"

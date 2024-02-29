@@ -19,6 +19,7 @@ RUN apt update -y && apt upgrade -y && apt install -y apt-utils dialog aptitude
 RUN aptitude install -y '?priority(required)' '?priority(important)' '?priority(standard)' nano wget curl sudo gpg gpg-agent network-manager zip unzip e2fsprogs git zsh zsh-autosuggestions zsh-syntax-highlighting
 
 COPY config/apt-packages.txt /root
+RUN xargs apt install -y < /root/apt-packages.txt
 
 RUN if [[ $DESKTOP == "xfce4" ]]; then \
     apt install -y xfce4 lightdm xorg firefox-esr network-manager-gnome gvfs-backends pulseaudio pulseaudio-module-bluetooth blueman \
@@ -49,32 +50,36 @@ RUN if [[ $DESKTOP == "kde" ]]; then \
     ; fi
 
 
-RUN echo "Package: linux-image-arm64 linux-headers-arm64" >> /etc/apt/preferences.d/kernel
-RUN echo "Pin: release a=unstable" >> /etc/apt/preferences.d/kernel
-RUN echo "Pin-Priority: 999" >> /etc/apt/preferences.d/kernel
-RUN echo "deb http://deb.debian.org/debian unstable main contrib non-free non-free-firmware" >> /etc/apt/sources.list
+#RUN echo "Package: linux-image-arm64 linux-headers-arm64" >> /etc/apt/preferences.d/kernel
+#RUN echo "Pin: release n=sid" >> /etc/apt/preferences.d/kernel
+#RUN echo "Pin-Priority: 999" >> /etc/apt/preferences.d/kernel
+#RUN echo "Package: *" >> /etc/apt/preferences.d/kernel
+#RUN echo "Pin: release n=${SUITE}" >> /etc/apt/preferences.d/kernel
+#RUN echo "Pin-Priority: 998" >> /etc/apt/preferences.d/kernel
+#RUN echo "deb http://deb.debian.org/debian unstable main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 RUN bash -c 'curl -L --output deb.deb "https://github.com/radxa-pkg/radxa-archive-keyring/releases/latest/download/radxa-archive-keyring_$(curl -L https://github.com/radxa-pkg/radxa-archive-keyring/releases/latest/download/VERSION)_all.deb"'
 RUN dpkg -i deb.deb
 RUN rm -f deb.deb
 RUN bash -c 'source /etc/os-release'
 RUN bash -c 'tee /etc/apt/sources.list.d/radxa.list <<< "deb [signed-by=/usr/share/keyrings/radxa-archive-keyring.gpg] https://radxa-repo.github.io/bookworm/ bookworm main"'
-RUN apt update -y
+RUN apt update -y && apt install -y radxa-firmware
 
 RUN useradd -m -s /bin/bash ${USERNAME}
 RUN echo "${PASSWORD}:${PASSWORD}" | chpasswd
 RUN usermod -aG sudo ${USERNAME}
 COPY config/.zshrc /home/${USERNAME}
 
-COPY config/.zshrc /home/${USERNAME}
 RUN chown ${USERNAME}:${USERNAME} /home/${USERNAME}/.zshrc
 RUN cp /home/${USERNAME}/.zshrc /root
 RUN chown root:root /root/.zshrc
 RUN chsh -s /bin/zsh ${USERNAME}
 RUN chsh -s /bin/zsh root
 
-RUN echo "root=LABEL=rootfs console=ttyFIQ0,1500000n8 quiet splash loglevel=4 rw earlycon consoleblank=0 console=tty1 coherent_pool=2M irqchip.gicv3_pseudo_nmi=0 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1" > /etc/kernel/cmdline
+RUN echo "root=LABEL=rootfs console=ttyFIQ0,1500000n8 quiet splash loglevel=1 rw earlycon consoleblank=0 console=tty1 coherent_pool=2M irqchip.gicv3_pseudo_nmi=0 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1" > /etc/kernel/cmdline
 
-RUN apt install -y kmod wireless-tools net-tools inetutils* initramfs-tools network-manager tar zip unzip bzip2 binutils u-boot-menu pulseaudio pulseaudio-module-bluetooth ntpsec locales parted util-linux u-boot-tools linux-image-arm64/unstable
+RUN apt install -y kmod wireless-tools net-tools inetutils* initramfs-tools network-manager tar zip unzip bzip2 u-boot-menu pulseaudio pulseaudio-module-bluetooth ntpsec locales parted util-linux u-boot-tools firmware-brcm80211 iw wireless-regdb
+
+## RUN apt install -y linux-image-arm64
 
 COPY config/resize2fs /etc/init.d/
 RUN chmod +x /etc/init.d/resize2fs
