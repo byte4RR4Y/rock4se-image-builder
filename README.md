@@ -2,7 +2,7 @@
 ## With the latest Linux Kernel !!!
 
 ### PLEASE report any issues!
-When you start youre build just type 'sudo resizeroot' to expand root filesystem
+When you start your build just type 'sudo resizeroot' to expand root filesystem
 #####################################################################################
 ## Changes
     - Fixed some issues with the Dockerfile
