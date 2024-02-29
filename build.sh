@@ -294,9 +294,6 @@ if [[ "$BUILD" == "yes" ]]; then
 ##########################################################################################################################
     if [ "$DESKTOP" = "CLI" || "none" ]; then
         ./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img" rw
-    else
-        echo "Configuring the display manager..."
-        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img" rw
     fi
 ##########################################################################################################################
     filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img")
