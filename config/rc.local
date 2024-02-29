@@ -1,18 +1,24 @@
 #! /bin/bash
 
+if [ -f /etc/default/FIRSTBOOT ]; then
+  /etc/init.d/resize2fs start
+fi
+
 if [ -e /etc/configboot ]; then
   hostnamectl set-hostname rock4se
   chmod u+s /usr/bin/sudo
-  dpkg-reconfigure lightdm
-  dpkg-reconfigure sddm
-  dpkg-reconfigure gdm3
+  if dpkg -l | grep -q "lightdm"; then
+  	dpkg-reconfigure lightdm
+  fi
+  if dpkg -l | grep -q "sddm"; then
+  	dpkg-reconfigure sddm
+  fi
+  if dpkg -l | grep -q "gdm3"; then
+  	dpkg-reconfigure gdm3
+  fi
   rm /etc/configboot
   touch /etc/default/FIRSTBOOT
   poweroff
 fi
 
-if [ -e /etc/default/FIRSTBOOT ]; then
-  /etc/init.d/resize2fs start
-  rm /etc/firstboot
-fi
 exit 0
