@@ -247,6 +247,7 @@ if [[ "$BUILD" == "yes" ]]; then
     while [[ "$(cat config/kernel_status)" != "1" ]]; do
         sleep 2
     done
+    rm config/kernel_status
     docker cp kernel*.zip debiancontainer:/
     docker cp config/installkernel.sh debiancontainer:/
     docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
@@ -265,6 +266,7 @@ if [[ "$BUILD" == "yes" ]]; then
     rootfs_size=$(cat config/rootfs_size.txt)
     echo "Creating an empty rootfs image..."
     dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 512)) status=progress
+    rm config/rootfs_size.txt
     mkfs.ext4 -L rootfs $ROOTFS -F
     mkfs.ext4 ${ROOTFS} -L rootfs -F
     mkdir -p .loop/root
@@ -302,4 +304,5 @@ if [[ "$BUILD" == "yes" ]]; then
     else
         echo "SORRY, BUILD WAS NOT SUCCESSFULL"
     fi
+    rm config/release
 fi

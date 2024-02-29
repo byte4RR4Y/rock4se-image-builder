@@ -7,7 +7,7 @@ CPUS=$(($(nproc) / 2 ))
 
 
 
-#-device usb-host,hostbus=5,hostport=1
+
 mkdir -p /tmp/mytpm1
 swtpm socket --tpmstate dir=/tmp/mytpm1 --ctrl type=unixio,path=/tmp/mytpm1/swtpm-sock --tpm2 --log level=0 &
 
@@ -26,7 +26,7 @@ if [ "$RW" == "" ]; then
   -device virtio-keyboard-pci \
   -netdev user,id=net0 \
   -device virtio-net-pci,netdev=net0 \
-  -device virtio-mouse-pci -nographic
+  -device virtio-mouse-pci -nographic -no-reboot
 elif [ "$RW" == "rw" ]; then
   sudo qemu-system-aarch64  \
   -M virt \
@@ -42,6 +42,6 @@ elif [ "$RW" == "rw" ]; then
   -device virtio-keyboard-pci \
   -netdev user,id=net0 \
   -device virtio-net-pci,netdev=net0 \
-  -device virtio-mouse-pci -nographic
+  -device virtio-mouse-pci -nographic -no-reboot
 fi
 pkill swtpm

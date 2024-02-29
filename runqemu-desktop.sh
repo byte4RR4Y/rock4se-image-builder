@@ -29,7 +29,7 @@ sudo qemu-system-aarch64 \
   -device virtio-blk-device,drive=disk \
   -device virtio-keyboard-pci \
   -netdev user,id=net0 \
-  -device virtio-net-pci,netdev=net0
+  -device virtio-net-pci,netdev=net0 -no-reboot
 
   elif [ "$SCREEN" == "nofullscreen" ]; then
   sudo qemu-system-aarch64 \
@@ -49,7 +49,7 @@ sudo qemu-system-aarch64 \
   -netdev user,id=net0 \
   -device virtio-net-pci,netdev=net0 \
   -device qemu-xhci -display gtk,gl=on,show-cursor=on \
-  -device virtio-gpu-pci -device virtio-mouse-pci
+  -device virtio-gpu-pci -device virtio-mouse-pci -no-reboot
 elif [ "$SCREEN" == "rw" ]; then
   sudo qemu-system-aarch64 \
   -M virt \
@@ -68,6 +68,6 @@ elif [ "$SCREEN" == "rw" ]; then
   -netdev user,id=net0 \
   -device virtio-net-pci,netdev=net0 \
   -device qemu-xhci -display gtk,gl=on,show-cursor=on \
-  -device virtio-gpu-pci -device virtio-mouse-pci
+  -device virtio-gpu-pci -device virtio-mouse-pci -no-reboot
 fi
 pkill swtpm
