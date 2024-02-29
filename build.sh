@@ -267,7 +267,7 @@ if [[ "$BUILD" == "yes" ]]; then
     ROOTFS=.rootfs.img
     rootfs_size=$(cat config/rootfs_size.txt)
     echo "Creating an empty rootfs image..."
-    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 512)) status=progress
+    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 1536)) status=progress
     rm config/rootfs_size.txt
     mkfs.ext4 -L rootfs $ROOTFS -F
     mkfs.ext4 ${ROOTFS} -L rootfs -F
@@ -293,11 +293,11 @@ if [[ "$BUILD" == "yes" ]]; then
     chown -R ${SUDO_USER}:${SUDO_USER} output/
     rm -rf .loop/ .rootfs.img .rootfs.tar "${ROOTFS}.gz"
 ##########################################################################################################################
-    if [ "$DESKTOP" != "CLI" || "none" ]; then
+    if [ "$DESKTOP" = "CLI" || "none" ]; then
+        ./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img" rw
+    else
         echo "Configuring the display manager..."
         ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img" rw
-    else
-    	  ./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img" rw
     fi
 ##########################################################################################################################
     filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img")
