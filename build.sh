@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TIMESTAMP=$(date +%s)
-
+##########################################################################################################################
 usage() {
     echo "Usage: $0 [-h|--help] [-s|--suite SUITE] [-d|--desktop DESKTOP] [-a|--additional ADDITIONAL] [-u|--username USERNAME] [-p|--password PASSWORD] [-b]"
     echo "-------------------------------------------------------------------------------------------------"
@@ -51,98 +51,122 @@ rm .rootfs.tar
 rm -rf .rootfs/
 rm config/rootfs_size.txt
 echo ""
-clear
+##########################################################################################################################
 # Check if arguments are missing
 if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$INTERACTIVE" ]; then
-clear
-echo "Choose the Debian Suite:"
-echo ""
-echo "1. Testing"
-echo "2. Experimental"
-echo "3. Trixie"
-echo "4. Sid"
-echo "5. Bookworm"
-echo "6. Bullseye"
-echo ""
-read -p "Enter the number of your choice: " choice
-if [[ "$choice" -eq 1 ]]; then
-    echo "SUITE=testing" > .config
-elif [[ "$choice" -eq 2 ]]; then
-    echo "SUITE=experimental" > .config
-elif [[ "$choice" -eq 3 ]]; then
-    echo "SUITE=trixie" > .config
-elif [[ "$choice" -eq 4 ]]; then
-    echo "SUITE=sid" > .config
-elif [[ "$choice" -eq 5 ]]; then
-    echo "SUITE=bookworm" > .config
-elif [[ "$choice" -eq 6 ]]; then
-    echo "SUITE=bullseye" > .config
-else
-	exit 1
-fi
+##########################################################################################################################
+whiptail --title "Menu" --menu "Choose an option" 15 60 4 \
+"1" "testing" \
+"2" "experimental" \
+"3" "trixie" \
+"4" "sid" \
+"5" "bookworm" \
+"6" "bullseye" 2> choice.txt
+choice=$(cat choice.txt)
 
-clear
-echo "Choose the Desktop of your choice:"
-echo ""
-echo " 0. none"
-echo " 1. xfce"
-echo " 2. gnome"
-echo " 3. mate"
-echo " 4. cinnamon"
-echo " 5. lxqt"
-echo " 6. lxde"
-echo " 7. unity"
-echo " 8. budgie"
-echo " 9. kde plasma"
-echo ""
-read -p "Enter the number of your choice: " choice
-if [[ "$choice" -eq 0 ]]; then
+case $choice in
+  1)
+    echo "SUITE=testing" >> .config
+    ;;
+  2)
+    echo "SUITE=experimental" >> .config
+    ;;
+  3)
+    echo "SUITE=trixie" >> .config
+    ;;
+  4)
+    echo "SUITE=sid" >> .config
+    ;;
+  5)
+    echo "SUITE=bookworm" >> .config
+    ;;
+  6)
+    echo "SUITE=bullseye" >> .config
+    ;;
+  *)
+    echo "Invalid option"
+    ;;
+esac
+rm choice.txt
+##########################################################################################################################
+whiptail --title "Menu" --menu "Choose an option" 15 60 4 \
+"1" "none" \
+"2" "xfce" \
+"3" "gnome" \
+"4" "mate" \
+"5" "cinnamon" \
+"6" "lxqt" \
+"7" "lxde" \
+"8" "unity" \
+"9" "budgie" \
+"10" "kde" 2> choice.txt
+choice=$(cat choice.txt)
+
+case $choice in
+  1)
     echo "DESKTOP=CLI" >> .config
-elif [[ "$choice" -eq 1 ]]; then
+    ;;
+  2)
     echo "DESKTOP=xfce4" >> .config
-elif [[ "$choice" -eq 2 ]]; then
+    ;;
+  3)
     echo "DESKTOP=gnome" >> .config
-elif [[ "$choice" -eq 3 ]]; then
+    ;;
+  4)
     echo "DESKTOP=mate" >> .config
-elif [[ "$choice" -eq 4 ]]; then
+    ;;
+  5)
     echo "DESKTOP=cinnamon" >> .config
-elif [[ "$choice" -eq 5 ]]; then
+    ;;
+  6)
     echo "DESKTOP=lxqt" >> .config
-elif [[ "$choice" -eq 6 ]]; then
+    ;;
+  7)
     echo "DESKTOP=lxde" >> .config
-elif [[ "$choice" -eq 7 ]]; then
+    ;;
+  8)
     echo "DESKTOP=unity" >> .config
-elif [[ "$choice" -eq 8 ]]; then
+    ;;
+  9)
     echo "DESKTOP=budgie" >> .config
-elif [[ "$choice" -eq 9 ]]; then
+    ;;
+  10)
     echo "DESKTOP=kde" >> .config
-fi
+    ;;
+  *)
+    echo "Invalid option"
+    ;;
+esac
+rm choice.txt
+##########################################################################################################################    
 
-clear
-echo "Let's create a sudo user..."
-echo ""
-read -p "Enter Username: " choice
+USERNAME=$(whiptail --title "Create sudo user" --inputbox "Enter username:" 10 60 3>&1 1>&2 2>&3)
 
-    echo "USERNAME=$choice" >> .config
-echo ""
-read -p "Enter Password: " choice
+# Passwort abfragen
+PASSWORD=$(whiptail --title "Create sudo user" --passwordbox "Enter password:" 10 60 3>&1 1>&2 2>&3)
 
-    echo "PASSWORD=$choice" >> .config
-clear
+echo "USERNAME=${USERNAME}" >> .config
+echo "PASSWORD=${PASSWORD}" >> .config
+##########################################################################################################################
+whiptail --title "Menu" --menu "Choose an option" 15 60 4 \
+"1" "Start interactive shell in the container" \
+"2" "Just build with the given configuration" 2> choice.txt
 
-clear
-echo "Do you want to have an interactive shell inside the Docker container?"
-echo ""
-echo " 1. yes"
-echo " 2. no"
-echo ""
-read -p "Enter the number of your choice: " choice
-if [[ "$choice" -eq 1 ]]; then
+choice=$(cat choice.txt)
+
+case $choice in
+  1)
     echo "INTERACTIVE=yes" >> .config
-elif [[ "$choice" -eq 2 ]]; then
+    ;;
+  2)
     echo "INTERACTIVE=no" >> .config
-fi
-
+    ;;
+  *)
+    echo "Invalid option"
+    ;;
+esac
+rm choice.txt
+##########################################################################################################################
 while IFS='=' read -r key value; do
     case "$key" in
     	SUITE)
@@ -166,32 +190,24 @@ while IFS='=' read -r key value; do
 done < .config
 fi
 
+##########################################################################################################################
+display_variables() {
+    whiptail --title "Is this configuration correct?" --yesno \
+    "SUITE=$SUITE\nDESKTOP=$DESKTOP\nUSERNAME=$USERNAME\nPASSWORD=$PASSWORD\nINTERACTIVE=$INTERACTIVE" \
+    20 60
+}
 
-echo "------------------------------"
-echo "SUITE="$SUITE
-echo "DESKTOP="$DESKTOP
-echo "USERNAME="$USERNAME
-echo "PASSWORD="$PASSWORD
-echo "INTERACTIVE="$INTERACTIVE
-echo "------------------------------"
-# Proceed with building image if -b option provided or ask for confirmation
-if [[ "$BUILD" == "yes" ]]; then
-    echo "Building image with the specified configuration..."
+# Anzeige der Variablen aufrufen
+display_variables
+
+# Überprüfen der Benutzerantwort
+if [ $? -eq 0 ]; then
+    BUILD=yes
 else
-    echo ""
-	echo "Do you want to build the image with this configuration?"
-	echo ""
-	echo "1. yes"
-	echo "2. no"
-	echo ""
-	read -p "Enter the number of your choice: " choice2
-	if [[ "$choice2" -eq 1 ]]; then
-	    BUILD="yes"
-	else
-	    exit 1
-	fi
+    BUILD=no
 fi
 
+##########################################################################################################################
 if [[ "$BUILD" == "yes" ]]; then
     while IFS='=' read -r key value; do
         case "$key" in
@@ -217,7 +233,7 @@ if [[ "$BUILD" == "yes" ]]; then
 
 
     echo "0" > config/kernel_status
-    ##xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh" &
+    xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh" &
     
     echo "Building Docker image..."
     sleep 1
@@ -226,23 +242,17 @@ if [[ "$BUILD" == "yes" ]]; then
     docker rm debiancontainer
     docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
     
-    docker kill debiancontainer
-    docker rm debiancontainer
-
-    docker run --platform linux/arm64/v8 -dit --name debiancontainer debian:finest /bin/bash  
+    docker run --platform=aarch64 -dit --name debiancontainer debian:finest /bin/bash  
     echo "Waiting for Kernel compilation..."
-    ##while [[ "$(cat config/kernel_status)" != "1" ]]; do
-    ##    sleep 2
-    ##done
+    while [[ "$(cat config/kernel_status)" != "1" ]]; do
+        sleep 2
+    done
     docker cp kernel*.zip debiancontainer:/
     docker cp config/installkernel.sh debiancontainer:/
     docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
     docker exec debiancontainer bash -c 'rm -rf /kernel*.zip'
     docker exec debiancontainer bash -c 'rm /installkernel.sh'
-    docker exec debiancontainer bash -c 'echo "n" | apt install task-rock-4se -y'
-    docker exec debiancontainer bash -c 'apt install -y radxa-firmware firmware-brcm80211/bookworm firmware-realtek firmware-atheros firmware-ath9k-htc'
-    docker exec debiancontainer bash -c 'xargs apt install -y < /root/apt-packages.txt'
-    docker exec debiancontainer bash -c 'rm /root/apt-packages.txt'
+    docker exec debiancontainer bash -c 'u-boot-update'
     rm kernel-*.zip
     
     if [[ "$INTERACTIVE" == "yes" ]]; then
@@ -254,7 +264,7 @@ if [[ "$BUILD" == "yes" ]]; then
     ROOTFS=.rootfs.img
     rootfs_size=$(cat config/rootfs_size.txt)
     echo "Creating an empty rootfs image..."
-    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 650)) status=progress
+    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 1536)) status=progress
     
     mkfs.ext4 -L rootfs $ROOTFS -F
     mkfs.ext4 ${ROOTFS} -L rootfs -F
@@ -269,21 +279,20 @@ if [[ "$BUILD" == "yes" ]]; then
     cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
     cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
     umount .loop/root
-    e2fsck -fyvC 0 ${ROOTFS}
+    e2fsck -f ${ROOTFS}
     resize2fs -M ${ROOTFS}
     gzip ${ROOTFS}
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
-	RELEASE=$(cat config/release.txt)
-    zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img"
+    zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img"
     chown -R ${SUDO_USER}:${SUDO_USER} output/
-    rm -rf .loop/root .rootfs.img .loop/ .rootfs.tar "${ROOTFS}.gz"
+    rm -rf .loop/root .rootfs.img .rootfs.tar "${ROOTFS}.gz"
     if [ "$DESKTOP" != "CLI" || "none" ]; then
         echo "Configuring the display manager..."
-        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
+        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
     else
-    	./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
+    	  ./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img" rw
     fi
-    filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img")
+    filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build.img")
     if [ $filesize -gt 1073741824 ]; then
         echo "BUILD WAS SUCCESSFULL!"
     else
