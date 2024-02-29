@@ -68,8 +68,8 @@ You will find your image in the output folder.
 
 ##Currently supported desktops:
   - none(Command line interface/tested)
-  - xfce(tested)
-  - gnome
+  - xfce     (tested)
+  - gnome    (tested)
   - mate
   - cinnamon
   - lxqt
