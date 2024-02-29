@@ -15,7 +15,7 @@
     - Updated the gui
     - Compile and install latest Kernel !!! At the moment it's 6.8.0-rc6 (2024-02-29)
 #####################################################################################
-# This script builds SD-Card images for the Radxa Rock 4 SE as it follows:
+# This script builds SD-Card images for Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
     - Compiling and installing the latest Linux Kernel.
     - Flash the u-boot bootloader(2024-01) and the root filesystem to the SD-Card image.
