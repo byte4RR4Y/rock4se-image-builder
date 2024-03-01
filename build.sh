@@ -302,7 +302,7 @@ if [[ "$BUILD" == "yes" ]]; then
     ROOTFS=.rootfs.img
     rootfs_size=$(cat config/rootfs_size.txt)
     echo "Creating an empty rootfs image..."
-    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 1024)) status=progress
+    dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 750)) status=progress
     rm config/rootfs_size.txt
     mkfs.ext4 -L rootfs $ROOTFS -F
     mkfs.ext4 ${ROOTFS} -L rootfs -F
@@ -336,9 +336,13 @@ if [[ "$BUILD" == "yes" ]]; then
 ##########################################################################################################################
     filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img")
     if [ $filesize -gt 1073741824 ]; then
+        echo "--------------------------------------"
         echo "CONGRATULATION, BUILD WAS SUCCESSFULL!"
+        echo "--------------------------------------"
     else
+        echo "--------------------------------"
         echo "SORRY, BUILD WAS NOT SUCCESSFULL"
+        echo "--------------------------------"
     fi
     rm config/release
 fi
