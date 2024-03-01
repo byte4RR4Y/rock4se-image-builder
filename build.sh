@@ -8,6 +8,7 @@ usage() {
     echo "Options:"
     echo "  -h, --help                      Show this help message and exit"
     echo "  -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)"
+    echo "  -k, --kernel latest/standard    Choose which kernel to install"
     echo "  -d, --desktop DESKTOP           Choose the desktop environment."
     echo "                                  (none/xfce4/gnome/cinnamon/lxqt/lxde/unity/budgie/kde)"
     echo "                                  This only has an effect in kombination with -d or --desktop"
@@ -32,6 +33,7 @@ while [[ "$#" -gt 0 ]]; do
     case $1 in
         -h|--help) usage;;
         -s|--suite) SUITE="$2"; shift ;;
+        -k|--kernel) KERNEL="$2"; shift ;;
         -d|--desktop) DESKTOP="$2"; shift ;;
         -u|--username) USERNAME="$2"; shift ;;
         -p|--password) PASSWORD="$2"; shift ;;
