@@ -16,7 +16,7 @@ SHELL ["/bin/bash", "-c"]
 RUN apt update -y
 
 RUN apt update -y && apt upgrade -y && apt install -y apt-utils dialog aptitude
-RUN aptitude install -y '?priority(required)' '?priority(important)' '?priority(standard)' nano fsck wget curl sudo gpg gpg-agent network-manager zip unzip e2fsprogs git zsh zsh-autosuggestions zsh-syntax-highlighting
+RUN aptitude install -y '?priority(required)' '?priority(important)' '?priority(standard)' nano wget curl sudo gpg gpg-agent network-manager zip unzip e2fsprogs git zsh zsh-autosuggestions zsh-syntax-highlighting
 
 COPY config/apt-packages.txt /root
 RUN xargs apt install -y < /root/apt-packages.txt
