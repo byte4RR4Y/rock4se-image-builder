@@ -46,8 +46,8 @@ You will find your image in the output folder.
 ## For example:
 ---------------------------------------------------
     ./runqemu-cli.sh output/Debian-experimental-CLI-build-1708557914/Debian-experimental-CLI.img
-    ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708557914/Debian-experimental-xfce4-build-6.8.0-rc6.img
-    ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708557914/Debian-experimental-xfce4-build-6.8.0-rc6.img nofullscreen
+    ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708557914/Debian-experimental-xfce4-build-standard.img
+    ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708557914/Debian-experimental-xfce4-build-standard.img nofullscreen
 ---------------------------------------------------
 
 # Adding custom packages to install
