@@ -1,4 +1,4 @@
-# rock4se-image-builder v1.5
+# rock4se-image-builder v1.6
 ## With the latest Linux Kernel !!!
 For questions or suggestions use the Discussions forum
 ### PLEASE report any issues!
@@ -81,6 +81,7 @@ Type './build.sh -h'
 ---------------------------------------------------
     -h, --help                      Show this help message and exit
     -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)
+    -k, --kernel latest/standard    Choose which kernel to install
     -d, --desktop DESKTOP           Choose the desktop environment (e.g., xfce4, kde, none)
     -i, --interactive yes/no        Start an interactive shell in the docker container (yes/no)
                                     This only has an effect in kombination with -d or --desktop
