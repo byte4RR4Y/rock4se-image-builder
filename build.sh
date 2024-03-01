@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TIMESTAMP=$(date +%s)
+TIMESTAMP=$(date +%Y-%m-%d)
 ##########################################################################################################################
 usage() {
     echo "Usage: $0 [-h|--help] [-s|--suite SUITE] [-d|--desktop DESKTOP] [-a|--additional ADDITIONAL] [-u|--username USERNAME] [-p|--password PASSWORD] [-b]"
