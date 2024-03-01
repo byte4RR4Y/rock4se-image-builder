@@ -8,6 +8,7 @@ git clone --depth=1 https://github.com/torvalds/linux
 cd linux
 
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+cp ${CWD}/config/.config ./
 
 BUILD="$(sed -n 's|^.*\s\+\(\S\+\.\S\+\.\S\+\)\s\+Kernel Configuration$|\1|p' .config)"
 echo "${BUILD}" > ${CWD}/config/release
@@ -40,8 +41,8 @@ fi
 chown "${REALUSER}:${REALUSER}" "${ARCHIVE}"
 cd ${CWD}/linux
 mv "${KERNELDIR}/${ARCHIVE}" "${OUTDIR}"
-rm -rf "${KERNELDIR}"
+#rm -rf "${KERNELDIR}"
 cd ${CWD}
-rm -rf linux
+#rm -rf linux
 
 echo "1" > ${CWD}/config/kernel_status
