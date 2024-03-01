@@ -22,6 +22,7 @@ RUN aptitude install -y '?priority(required)' '?priority(important)' '?priority(
 
 COPY config/apt-packages.txt /root
 RUN xargs apt install -y < /root/apt-packages.txt
+RUN rm /root/apt-packages.txt
 
 RUN if [[ $DESKTOP == "xfce4" ]]; then \
     apt install -y xfce4 lightdm xorg firefox-esr network-manager-gnome gvfs-backends pulseaudio pulseaudio-module-bluetooth blueman \
