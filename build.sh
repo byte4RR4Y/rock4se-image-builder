@@ -1,5 +1,6 @@
 #!/bin/bash
 
+INTERACTIVE=no
 TIMESTAMP=$(date +%Y-%m-%d)
 ##########################################################################################################################
 usage() {
@@ -55,7 +56,7 @@ rm config/rootfs_size.txt
 echo ""
 ##########################################################################################################################
 # Check if arguments are missing
-if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$INTERACTIVE" ]; then
+if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$KERNEL" ]; then
 ##########################################################################################################################
 whiptail --title "Menu" --menu "Choose a Debian Suite" 40 40 6 \
 "1" "testing" \
@@ -326,9 +327,9 @@ if [[ "$BUILD" == "yes" ]]; then
 ##########################################################################################################################
     if [ "$DESKTOP" = "CLI" || "none" ]; then
         	./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
-    else
-            echo "Configuring the display manager..."
-        ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
+    elif [ "$KERNEL" == "standard" ]; then
+          echo "Configuring the display manager..."
+          ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
     fi
 ##########################################################################################################################
     filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img")
