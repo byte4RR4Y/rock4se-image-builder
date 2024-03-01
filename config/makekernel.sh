@@ -8,14 +8,14 @@ git clone --depth=1 https://github.com/torvalds/linux
 cd linux
 
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
-cp ${CWD}/config/.config ./
+
 
 BUILD="$(sed -n 's|^.*\s\+\(\S\+\.\S\+\.\S\+\)\s\+Kernel Configuration$|\1|p' .config)"
 echo "${BUILD}" > ${CWD}/config/release
 KERNELDIR="KERNEL-${BUILD}"
 mkdir -p "${KERNELDIR}"
 echo "${BUILD}" ${CWD}/config/release.txt
-make -j ${CPUS} KERNELRELEASE="${BUILD}" ARCH=arm64 CONFIG_BRCMUTIL=m CONFIG_BRCMFMAC=m CONFIG_ARCH_ROCKCHIP=y CONFIG_WIRELESS=y CONFIG_DRM_VIRTIO_GPU=m DRM_VIRTIO_GPU_KMS=m CONFIG_DRM_PANEL_SITRONIX_ST7703=m CONFIG_DRM_PANEL_BOE_TV101WUM_NL6=m CONFIG_DRM_PANEL_LVDS=m CONFIG_DRM_PANEL_SIMPLE=m CONFIG_DRM_PANEL_EDP=m CONFIG_DRM_PANEL_ILITEK_ILI9882T=m CONFIG_DRM_PANEL_MANTIX_MLAF057WE51=m CONFIG_DRM=m CONFIG_MOUSE_ELAN_I2C_I2C=y CROSS_COMPILE=aarch64-linux-gnu- Image.gz modules dtbs
+make -j ${CPUS} ARCH=arm64 KERNELRELEASE="${BUILD}" CROSS_COMPILE=aarch64-linux-gnu- CONFIG_ARCH_ROCKCHIP=y Image.gz modules dtbs
 env PATH=$PATH make KERNELRELEASE="${BUILD}" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=${KERNELDIR} modules_install
 mkdir -p "${KERNELDIR}/boot/" "${KERNELDIR}/lib/linux-image-${BUILD}/rockchip/"
 echo "ffffffffffffffff B The real System.map is in the linux-image-<version>-dbg package" > "${KERNELDIR}/boot/System.map-${BUILD}"
