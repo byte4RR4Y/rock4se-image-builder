@@ -89,6 +89,24 @@ case $choice in
 esac
 rm choice.txt
 ##########################################################################################################################
+whiptail --title "Menu" --menu "Choose Kernel to install" 40 40 6 \
+"1" "Standardkernel of the Debian Suite" \
+"2" "Download and compile latest availible Kernel" 2> choice.txt
+choice=$(cat choice.txt)
+
+case $choice in
+  1)
+    echo "KERNEL=standard" >> .config
+    ;;
+  2)
+    echo "KERNEL=latest" >> .config
+    ;;
+  *)
+    echo "Invalid option"
+    ;;
+esac
+rm choice.txt
+##########################################################################################################################
 whiptail --title "Menu" --menu "Choose a Desktop option" 20 65 10 \
 "1" "none" \
 "2" "xfce" \
@@ -193,7 +211,7 @@ fi
 ##########################################################################################################################
 display_variables() {
     whiptail --title "Is this configuration correct?" --yesno \
-    "SUITE=$SUITE\nDESKTOP=$DESKTOP\nUSERNAME=$USERNAME\nPASSWORD=$PASSWORD\nINTERACTIVE=$INTERACTIVE" \
+    "SUITE=$SUITE\nKERNEL=$KERNEL\nDESKTOP=$DESKTOP\nUSERNAME=$USERNAME\nPASSWORD=$PASSWORD\nINTERACTIVE=$INTERACTIVE" \
     20 60
 }
 
@@ -240,23 +258,28 @@ if [[ "$BUILD" == "yes" ]]; then
     docker rmi debian:finest
     docker kill debiancontainer
     docker rm debiancontainer
-    docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD -t debian:finest -f config/Dockerfile .
+    docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD --build-arg "KERNEL="$KERNEL -t debian:finest -f config/Dockerfile .
 ##########################################################################################################################    
     docker run --platform=aarch64 -dit --name debiancontainer debian:finest /bin/bash  
-    echo "Waiting for Kernel compilation..."
-    while [[ "$(cat config/kernel_status)" != "1" ]]; do
+
+    if [ "$KERNEL" == "latest" ]; then
+      echo "Waiting for Kernel compilation..."
+      while [[ "$(cat config/kernel_status)" != "1" ]]; do
         sleep 2
-    done
-    rm config/kernel_status
+      done
+      rm config/kernel_status
+      docker cp kernel*.zip debiancontainer:/
+      docker cp config/installkernel.sh debiancontainer:/
+      docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
+      docker exec debiancontainer bash -c 'rm -rf /kernel*.zip'
+      docker exec debiancontainer bash -c 'rm /installkernel.sh'
+      docker exec debiancontainer bash -c 'u-boot-update'
+      rm kernel-*.zip
+    fi
+
     docker cp config/resizeroot debiancontainer:/usr/local/bin
     docker exec debiancontainer bash -c 'chmod +x /usr/local/bin/resizeroot'
-    docker cp kernel*.zip debiancontainer:/
-    docker cp config/installkernel.sh debiancontainer:/
-    docker exec debiancontainer bash -c '/installkernel.sh kernel-*.zip'
-    docker exec debiancontainer bash -c 'rm -rf /kernel*.zip'
-    docker exec debiancontainer bash -c 'rm /installkernel.sh'
-    docker exec debiancontainer bash -c 'u-boot-update'
-    rm kernel-*.zip
+    
 ##########################################################################################################################    
     if [[ "$INTERACTIVE" == "yes" ]]; then
         docker attach debiancontainer
@@ -290,7 +313,7 @@ if [[ "$BUILD" == "yes" ]]; then
     RELEASE=$(cat config/release)
     zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img"
     chown -R ${SUDO_USER}:${SUDO_USER} output/
-    rm -rf .loop/ .rootfs.img .rootfs.tar "${ROOTFS}.gz"
+    rm -rf .loop/root .loop/ .rootfs.img .rootfs.tar "${ROOTFS}.gz"
 ##########################################################################################################################
     if [ "$DESKTOP" = "CLI" || "none" ]; then
         ./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img" rw
