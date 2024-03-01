@@ -68,30 +68,31 @@ choice=$(cat choice.txt)
 
 case $choice in
   1)
-    echo "SUITE=testing" >> .config
+    echo "SUITE=testing" > .config
     ;;
   2)
-    echo "SUITE=experimental" >> .config
+    echo "SUITE=experimental" > .config
     ;;
   3)
-    echo "SUITE=trixie" >> .config
+    echo "SUITE=trixie" > .config
     ;;
   4)
-    echo "SUITE=sid" >> .config
+    echo "SUITE=sid" > .config
     ;;
   5)
-    echo "SUITE=bookworm" >> .config
+    echo "SUITE=bookworm" > .config
     ;;
   6)
-    echo "SUITE=bullseye" >> .config
+    echo "SUITE=bullseye" > .config
     ;;
   *)
     echo "Invalid option"
     ;;
 esac
+
 rm choice.txt
 ##########################################################################################################################
-whiptail --title "Menu" --menu "Choose Kernel to install" 40 40 6 \
+whiptail --title "Menu" --menu "Choose Kernel to install" 15 50 6 \
 "1" "Standardkernel of the Debian Suite" \
 "2" "Download and compile latest availible Kernel" 2> choice.txt
 choice=$(cat choice.txt)
@@ -107,6 +108,7 @@ case $choice in
     echo "Invalid option"
     ;;
 esac
+
 rm choice.txt
 ##########################################################################################################################
 whiptail --title "Menu" --menu "Choose a Desktop option" 20 65 10 \
@@ -192,6 +194,9 @@ while IFS='=' read -r key value; do
     	SUITE)
     		SUITE="$value"
     		;;
+        KERNEL)
+            KERNEL="$value"
+            ;;
         DESKTOP)
             DESKTOP="$value"
             ;;
