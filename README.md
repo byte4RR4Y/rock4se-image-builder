@@ -92,7 +92,7 @@ Type './build.sh -h'
     -b                              Build the image with the specified configuration without asking
 ---------------------------------------------------
 
-For example to build Debian testing with XFCE without additional software:
+For example to build Debian testing with XFCE with latest Kernel:
 ---------------------------------------------------
      ./build -s testing -d xfce4 -k latest -u debian -p 123456 -i no -b
 ---------------------------------------------------
