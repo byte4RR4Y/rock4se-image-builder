@@ -18,7 +18,7 @@ usage() {
     echo "  -i, --interactive               Start an interactive shell inside the container"
     echo "  -b                              Build the image with the specified configuration without asking"
     echo "-------------------------------------------------------------------------------------------------"
-    echo "For example: $0 -s sid -d none -a no -u USERNAME123 -p PASSWORD123 -b"
+    echo "For example: $0 -s sid -d none -k latest -u USERNAME123 -p PASSWORD123 -b"
     exit 1
 }
 
@@ -58,7 +58,7 @@ echo ""
 # Check if arguments are missing
 if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$KERNEL" ]; then
 ##########################################################################################################################
-whiptail --title "Menu" --menu "Choose a Debian Suite" 40 40 6 \
+whiptail --title "Menu" --menu "Choose a Debian Suite" 20 65 6 \
 "1" "testing" \
 "2" "experimental" \
 "3" "trixie" \
@@ -93,7 +93,7 @@ esac
 
 rm choice.txt
 ##########################################################################################################################
-whiptail --title "Menu" --menu "Choose Kernel to install" 15 50 6 \
+whiptail --title "Menu" --menu "Choose Kernel to install" 20 65 6 \
 "1" "Standardkernel of the Debian Suite" \
 "2" "Download and compile latest availible Kernel" 2> choice.txt
 choice=$(cat choice.txt)
@@ -163,15 +163,15 @@ esac
 rm choice.txt
 ##########################################################################################################################    
 
-USERNAME=$(whiptail --title "Create sudo user" --inputbox "Enter username:" 10 60 3>&1 1>&2 2>&3)
+USERNAME=$(whiptail --title "Create sudo user" --inputbox "Enter username:" 20 65 3>&1 1>&2 2>&3)
 
 # Passwort abfragen
-PASSWORD=$(whiptail --title "Create sudo user" --passwordbox "Enter password:" 10 60 3>&1 1>&2 2>&3)
+PASSWORD=$(whiptail --title "Create sudo user" --passwordbox "Enter password:" 20 65 3>&1 1>&2 2>&3)
 
 echo "USERNAME=${USERNAME}" >> .config
 echo "PASSWORD=${PASSWORD}" >> .config
 ##########################################################################################################################
-whiptail --title "Menu" --menu "Choose an option" 15 60 4 \
+whiptail --title "Menu" --menu "Choose an option" 20 65 4 \
 "1" "Start interactive shell in the container" \
 "2" "Just build with the given configuration" 2> choice.txt
 
