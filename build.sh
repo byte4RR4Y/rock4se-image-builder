@@ -321,6 +321,9 @@ if [[ "$BUILD" == "yes" ]]; then
     gzip ${ROOTFS}
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
     RELEASE=$(cat config/release)
+    if [ "$RELEASE" == "" ]; then
+      RELEASE="standard"
+    fi
     zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img"
     chown -R ${SUDO_USER}:${SUDO_USER} output/
     rm -rf .loop/root .loop/ .rootfs.img .rootfs.tar "${ROOTFS}.gz"
