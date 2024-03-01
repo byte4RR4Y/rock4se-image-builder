@@ -12,7 +12,7 @@ if [ -e /etc/configboot ]; then
 fi
 
 if [ -e /etc/default/FIRSTBOOT ]; then
-  /etc/init.d/resize2fs start
+  resizeroot
   touch /etc/resizeroot
   rm /etc/firstboot
 fi
