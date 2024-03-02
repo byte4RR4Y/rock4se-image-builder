@@ -58,6 +58,9 @@ echo ""
 # Check if arguments are missing
 if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$KERNEL" ]; then
 ##########################################################################################################################
+info_text="HELP ME TO IMPROVE THIS PROGRAM\nSend an E-mail with suggestions to:\nbyte4rr4y@gmail.com"
+whiptail --title "Information" --msgbox "$info_text" 20 65
+##########################################################################################################################
 whiptail --title "Menu" --menu "Choose a Debian Suite" 20 65 6 \
 "1" "testing" \
 "2" "experimental" \
@@ -331,7 +334,7 @@ if [[ "$BUILD" == "yes" ]]; then
         	./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
     elif [ "$KERNEL" == "standard" ]; then
           echo "Configuring the display manager..."
-          ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
+          ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img" rw
     fi
 ##########################################################################################################################
     filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img")
