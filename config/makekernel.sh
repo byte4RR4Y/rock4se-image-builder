@@ -1,22 +1,148 @@
 #! /bin/bash
 
+HEADERS=$1
 CWD=$PWD
 OUTDIR=${CWD}
 CPUS=$(($(nproc)))
 
+# Kernel configuration
+export CONFIG_ARCH_ACTIONS=n
+export CONFIG_ARCH_SUNXI=n
+export CONFIG_ARCH_ALPINE=n
+export CONFIG_ARCH_APPLE=n
+export CONFIG_ARCH_BCM=n
+export CONFIG_ARCH_BERLIN=n
+export CONFIG_ARCH_BITMAIN=n
+export CONFIG_ARCH_EXYNOS=n
+export CONFIG_ARCH_SPARX5=n
+export CONFIG_ARCH_K3=n
+export CONFIG_ARCH_LG1K=n
+export CONFIG_ARCH_HISI=n
+export CONFIG_ARCH_KEEMBAY=n
+export CONFIG_ARCH_MEDIATEK=n
+export CONFIG_ARCH_MESON=n
+export CONFIG_ARCH_MVEBU=n
+export CONFIG_ARCH_NXP=n
+export CONFIG_ARCH_MA35=n
+export CONFIG_ARCH_NPCM=n
+export CONFIG_ARCH_PENSANDO=n
+export CONFIG_ARCH_QCOM=n
+export CONFIG_ARCH_REALTEK=n
+export CONFIG_ARCH_RENESAS=n
+export CONFIG_ARCH_ROCKCHIP=y
+export CONFIG_ARCH_SEATTLE=n
+export CONFIG_ARCH_INTEL_SOCFPGA=n
+export CONFIG_ARCH_STM32=n
+export CONFIG_ARCH_SYNQUACER=n
+export CONFIG_ARCH_TEGRA=n
+export CONFIG_ARCH_SPRD=n
+export CONFIG_ARCH_THUNDER=n
+export CONFIG_ARCH_THUNDER2=n
+export CONFIG_ARCH_UNIPHIER=n
+export CONFIG_ARCH_VEXPRESS=n
+export CONFIG_ARCH_VISCONTI=n
+export CONFIG_ARCH_XGENE=n
+export CONFIG_ARCH_ZYNQMP=n
+export CONFIG_DEBUG_INFO=y
+export CONFIG_DEBUG_FS=y
+export CONFIG_NET_9P=y        
+export CONFIG_QRTR=m             
+export CONFIG_AES_CE_BLK=m       
+export CONFIG_AES_CE_CIPHER=m    
+export CONFIG_POLYVAL_CE=m       
+export CONFIG_POLYVAL_GENERIC=m  
+export CONFIG_EVDEV=m            
+export CONFIG_GHASH_CE=m         
+export CONFIG_GF128MUL=m         
+export CONFIG_SHA2_CE=m          
+export CONFIG_SHA256_ARM64=m     
+export CONFIG_SHA1_CE=m   
+export CONFIG_LOOP=m             
+export CONFIG_DM_MOD=m           
+export CONFIG_EFI_PSTORE=m    
+export CONFIG_CONFIGFS=m         
+export CONFIG_NFNETLINK=m            
+export CONFIG_IP_TABLES=m        
+export CONFIG_X_TABLES=m         
+export CONFIG_AUTOFS4=m          
+export CONFIG_EXT4=m             
+export CONFIG_CRC16=m            
+export CONFIG_MBCACHE=m          
+export CONFIG_JBD2=m             
+export CONFIG_CRC32C_GENERIC=m
+export CONFIG_USBCORE=m      
+export CONFIG_NET_FAILOVER=m     
+export CONFIG_FAILOVER=m         
+export CONFIG_USB_COMMON=m
+export CONFIG_CRCT10DIF_CE=m   
+export CONFIG_CRCT10DIF_COMMON=m 
+export CONFIG_QEMU_FW_CFG=m 
+export CONFIG_XHCI_PCI=m         
+export CONFIG_DRM_KMS_HELPER=m   
+export CONFIG_XHCI_HCD=m         
+export CONFIG_VIRTIO_NET=m
+export CONFIG_VIRTIO_INPUT=m   
+export CONFIG_VIRTIO_BLK=m       
+export CONFIG_VIRTIO_GPU=m     
+export CONFIG_VIRTIO_DMA_BUF=m
+export CONFIG_SHMEM_HELPER=m
+export CONFIG_VIRTIO_RING=m
+export CONFIG_VIRTIO_BALLON=m
+export CONFIG_DRM=m
+export CONFIG_HAS_IOMEM=m
+export CONFIG_MMU=m          
+export CONFIG_VIRTIO_MMIO=m
+export CONFIG_DRM_SHMEM_HELPER=m
+export CONFIG_DRM_KMS_HELPER=m
+export CONFIG_VIRTIO_MEM=m
+export CONFIG_VIRTIO_PCI=m
+export CONFIG_VIRTIO_PCI_LEGACY_DEV=m
+export CONFIG_VIRTIO_PCI_MODERN_DEV=m
+export CONFIG_VIRTIO_PMEM=m
+export CONFIG_VIRTIO_SCSI=m
+export CONFIG_KVM=m
+export CONFIG_KVM_GUEST=y
+export CONFIG_VIRTIO_DMA_SHARED_BUFFER=m
+export CONFIG_DRM_FBDEV_EMULATION=m
+export CONFIG_INPUT_EVDEV=y
+export CONFIG_DRM_PANEL=m
+export CONFIG_DRM_PANEL_ORIENTATION_QUIRKS=m
+export CONFIG_DRM_BOCHS=m
+export CONFIG_DRM_QXL=m
+export CONFIG_DRM_BOCHS=m
+export CONFIG_DRM_PANEL_ORIENTATION_QUIRKS=m
+export CONFIG_FB_SIMPLE=y
+export CONFIG_FB_BOOT_VESA_SUPPORT=y
+export CONFIG_FRAMEBUFFER_CONSOLE=y
+export CONFIG_FONT_8x8=y
+export CONFIG_FONT_8x16=y
+export CONFIG_FONTS=y
+export CONFIG_FONT_TER16x32=y
+export CONFIG_FONT_SUPPORT=y
+export CONFIG_DRM_VIRTIO_GPU=m
+export CONFIG_DRM_FBDEV_EMULATION=m
+export CONFIG_FB_VESA=m
+export CONFIG_HAS_DMA=m
+export CONFIG_VIRT=m
+export CONFIG_VIRTIO_MENU=m
+export CONFIG_DRM_MALI=m
 git clone --depth=1 https://github.com/torvalds/linux
 cd linux
 
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
-
 
 BUILD="$(sed -n 's|^.*\s\+\(\S\+\.\S\+\.\S\+\)\s\+Kernel Configuration$|\1|p' .config)"
 echo "${BUILD}" > ${CWD}/config/release
 KERNELDIR="KERNEL-${BUILD}"
 mkdir -p "${KERNELDIR}"
 echo "${BUILD}" ${CWD}/config/release.txt
-make -j ${CPUS} ARCH=arm64 KERNELRELEASE="${BUILD}" CROSS_COMPILE=aarch64-linux-gnu- CONFIG_ARCH_ROCKCHIP=y Image.gz modules dtbs
+make -j ${CPUS} ARCH=arm64 KERNELRELEASE="${BUILD}" CROSS_COMPILE=aarch64-linux-gnu- Image.gz modules dtbs
 env PATH=$PATH make KERNELRELEASE="${BUILD}" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=${KERNELDIR} modules_install
+
+if [ "$HEADERS" == "yes" ]; then
+  make headers_install INSTALL_HDR_PATH=${KERNELDIR}
+fi
+
 mkdir -p "${KERNELDIR}/boot/" "${KERNELDIR}/lib/linux-image-${BUILD}/rockchip/"
 echo "ffffffffffffffff B The real System.map is in the linux-image-<version>-dbg package" > "${KERNELDIR}/boot/System.map-${BUILD}"
 cp .config "${KERNELDIR}/boot/config-${BUILD}"
@@ -41,7 +167,7 @@ fi
 chown "${REALUSER}:${REALUSER}" "${ARCHIVE}"
 cd ${CWD}/linux
 mv "${KERNELDIR}/${ARCHIVE}" "${OUTDIR}"
-#rm -rf "${KERNELDIR}"
+rm -rf "${KERNELDIR}"
 cd ${CWD}
 #rm -rf linux
 

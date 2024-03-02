@@ -5,7 +5,9 @@ ARG ADDITIONAL
 ARG USERNAME
 ARG PASSWORD
 ARG KERNEL
+ARG HEADERS
 
+ENV HEADERS=$HEADERS
 ENV KERNEL=$KERNEL
 ENV DESKTOP=$DESKTOP
 ENV ADDITIONAL=$ADDITIONAL
@@ -73,8 +75,11 @@ RUN echo "root=LABEL=rootfs console=ttyFIQ0,1500000n8 quiet splash loglevel=1 rw
 
 RUN apt install -y kmod wireless-tools net-tools inetutils* initramfs-tools network-manager usbutils tar zip unzip bzip2 u-boot-menu pulseaudio pulseaudio-module-bluetooth ntpsec locales parted util-linux u-boot-tools firmware-brcm80211 iw wireless-regdb
 
-RUN if [[ $KERNEL == "standard" ]]; then \
-    apt install -y linux-image-arm64 \
+RUN if [ "$KERNEL" = "standard" ]; then \
+        apt install -y linux-image-arm64 \
+    ; fi
+RUN if [ "$KERNEL" = "standard" -a "$HEADERS" = "yes" ]; then \
+        apt install -y linux-headers-arm64 \
     ; fi
 
 COPY config/resize2fs /etc/init.d/
