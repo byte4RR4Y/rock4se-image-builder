@@ -326,7 +326,7 @@ if [[ "$BUILD" == "yes" ]]; then
     gzip ${ROOTFS}
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
     RELEASE=$(cat config/release)
-    zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img"
+    zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img"
     chown -R ${SUDO_USER}:${SUDO_USER} output/
     rm -rf .loop/root .loop/ .rootfs.img .rootfs.tar "${ROOTFS}.gz"
 ##########################################################################################################################
@@ -334,10 +334,10 @@ if [[ "$BUILD" == "yes" ]]; then
         	./runqemu-cli.sh "output/Debian-${SUITE}-${DESKTOP}${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
     elif [ "$KERNEL" == "standard" ]; then
           echo "Configuring the display manager..."
-          ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img" rw
+          ./runqemu-desktop.sh "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img" rw
     fi
 ##########################################################################################################################
-    filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-build-${RELEASE}.img")
+    filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img")
     if [ $filesize -gt 1073741824 ]; then
         echo "--------------------------------------"
         echo "CONGRATULATION, BUILD WAS SUCCESSFULL!"
