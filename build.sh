@@ -10,12 +10,13 @@ usage() {
     echo "  -h, --help                      Show this help message and exit"
     echo "  -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)"
     echo "  -k, --kernel latest/standard    Choose which kernel to install"
+    echo "  -H, --headers yes/no            Install Kernel headers"
     echo "  -d, --desktop DESKTOP           Choose the desktop environment."
     echo "                                  (none/xfce4/gnome/cinnamon/lxqt/lxde/unity/budgie/kde)"
     echo "                                  This only has an effect in kombination with -d or --desktop"
     echo "  -u, --username USERNAME         Enter the username for the sudo user"
     echo "  -p, --password PASSWORD         Enter the password for the sudo user"
-    echo "  -i, --interactive               Start an interactive shell inside the container"
+    echo "  -i, --interactive yes/no        Start an interactive shell inside the container"
     echo "  -b                              Build the image with the specified configuration without asking"
     echo "-------------------------------------------------------------------------------------------------"
     echo "For example: $0 -s sid -d none -k latest -u USERNAME123 -p PASSWORD123 -b"
@@ -35,6 +36,7 @@ while [[ "$#" -gt 0 ]]; do
         -h|--help) usage;;
         -s|--suite) SUITE="$2"; shift ;;
         -k|--kernel) KERNEL="$2"; shift ;;
+        -H|--headers) HEADERS="$2"; shift ;;
         -d|--desktop) DESKTOP="$2"; shift ;;
         -u|--username) USERNAME="$2"; shift ;;
         -p|--password) PASSWORD="$2"; shift ;;
@@ -47,6 +49,7 @@ done
 
 echo "----------------------"
 echo "cleaning build area..."
+echo "----------------------"
 sleep 2
 rm .config
 rm .rootfs.img
@@ -56,9 +59,9 @@ rm config/rootfs_size.txt
 echo ""
 ##########################################################################################################################
 # Check if arguments are missing
-if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$KERNEL" ]; then
+if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$KERNEL" ] || [ -z "$HEADERS" ]; then
 ##########################################################################################################################
-info_text="HELP ME TO IMPROVE THIS PROGRAM\nSend an E-mail with suggestions to:\nbyte4rr4y@gmail.com"
+info_text="HELP ME TO IMPROVE THIS PROGRAM\n\nSend an E-mail with suggestions to: byte4rr4y@gmail.com"
 whiptail --title "Information" --msgbox "$info_text" 20 65
 ##########################################################################################################################
 whiptail --title "Menu" --menu "Choose a Debian Suite" 20 65 6 \
@@ -114,6 +117,23 @@ case $choice in
 esac
 
 rm choice.txt
+##########################################################################################################################
+display_variables() {
+    whiptail --title "KERNEL HEADERS" --yesno \
+    "Do you want to install Kernel Headers?" \
+    20 65
+}
+
+# Anzeige der Variablen aufrufen
+display_variables
+
+# Überprüfen der Benutzerantwort
+if [ $? -eq 0 ]; then
+    echo "HEADERS=yes" >> .config
+else
+    echo "HEADERS=no" >> .config
+fi
+
 ##########################################################################################################################
 whiptail --title "Menu" --menu "Choose a Desktop option" 20 65 10 \
 "1" "none" \
@@ -204,6 +224,9 @@ while IFS='=' read -r key value; do
         DESKTOP)
             DESKTOP="$value"
             ;;
+        HEADERS)
+            HEADERS="$value"
+            ;;
         USERNAME)
             USERNAME="$value"
             ;;
@@ -222,7 +245,7 @@ fi
 ##########################################################################################################################
 display_variables() {
     whiptail --title "Is this configuration correct?" --yesno \
-    "SUITE=$SUITE\nKERNEL=$KERNEL\nDESKTOP=$DESKTOP\nUSERNAME=$USERNAME\nPASSWORD=$PASSWORD\nINTERACTIVE=$INTERACTIVE" \
+    "SUITE=$SUITE\nKERNEL=$KERNEL\nHEADERS=$HEADERS\nDESKTOP=$DESKTOP\nUSERNAME=$USERNAME\nPASSWORD=$PASSWORD\nINTERACTIVE=$INTERACTIVE" \
     20 60
 }
 
@@ -243,8 +266,11 @@ if [[ "$BUILD" == "yes" ]]; then
             DESKTOP)
                 DESKTOP="$value"
                 ;;
-            ADDITIONAL)
-                ADDITIONAL="$value"
+            KERNEL)
+                KERNEL="$value"
+                ;;
+            HEADERS)
+                HEADERS="$value"
                 ;;
             USERNAME)
                 USERNAME="$value"
@@ -263,15 +289,15 @@ if [[ "$BUILD" == "yes" ]]; then
 ##########################################################################################################################
     if [ "$KERNEL" == "latest" ]; then
       echo "0" > config/kernel_status
-      xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh" &
+      xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh $HEADERS" &
     fi
 ##########################################################################################################################    
     echo "Building Docker image..."
     sleep 1
-    docker rmi debian:finest
     docker kill debiancontainer
     docker rm debiancontainer
-    docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD --build-arg "KERNEL="$KERNEL -t debian:finest -f config/Dockerfile .
+    docker rmi debian:finest
+    docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD --build-arg "KERNEL="$KERNEL --build-arg "HEADERS="$HEADERS -t debian:finest -f config/Dockerfile .
 ##########################################################################################################################    
     docker run --platform=aarch64 -dit --name debiancontainer debian:finest /bin/bash  
 
@@ -313,15 +339,14 @@ if [[ "$BUILD" == "yes" ]]; then
     mount ${ROOTFS} .loop/root
     docker export -o .rootfs.tar debiancontainer
     tar -xvf .rootfs.tar -C .loop/root
-##########################################################################################################################    
+    
     docker kill debiancontainer
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
     rm .loop/root/.dockerenv
-##########################################################################################################################
     cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
     cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
-##########################################################################################################################
     umount .loop/root
+
     e2fsck -f ${ROOTFS}
     gzip ${ROOTFS}
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu

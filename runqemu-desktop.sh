@@ -67,7 +67,7 @@ elif [ "$SCREEN" == "rw" ]; then
   -device virtio-keyboard-pci \
   -netdev user,id=net0 \
   -device virtio-net-pci,netdev=net0 \
-  -device qemu-xhci -display gtk,gl=on,show-cursor=on \
+  -device qemu-xhci -display gtk,gl=on,show-cursor=on,show-tabs=on \
   -device virtio-gpu-pci -device virtio-mouse-pci -no-reboot
 fi
 pkill swtpm
