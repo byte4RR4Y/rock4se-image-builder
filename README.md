@@ -1,4 +1,4 @@
-# rock4se-image-builder v1.8
+# rock4se-image-builder v2.0
 ## With the latest Linux Kernel !!!
 For questions or suggestions use the Discussions forum
 ### PLEASE report any issues!
@@ -19,7 +19,7 @@ When you start your build just type 'sudo resizeroot' to expand root filesystem
     - Added option to install latest or standard Kernel
     ! WITH QEMU YOU CAN EMULATE ONLY DESKTOPS WITH STANDARD KERNEL
     - Added installation of kernel headers.
-    <TRY TO COMPILE THE KERNEL WITH GRAPHICAL QEMU SUPPORT...>
+    - Added support for graphical emulation of custom Kernels!
 #####################################################################################
 # This script builds SD-Card images for Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
