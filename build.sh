@@ -118,22 +118,24 @@ esac
 
 rm choice.txt
 ##########################################################################################################################
-display_variables() {
-    whiptail --title "KERNEL HEADERS" --yesno \
-    "Do you want to install Kernel Headers?" \
-    20 65
-}
+whiptail --title "Menu" --menu "KERNEL HEADERS" 20 65 6 \
+"1" "Install Kernel headers" \
+"2" "Do not install Kernel headers" 2> choice.txt
+choice=$(cat choice.txt)
 
-# Anzeige der Variablen aufrufen
-display_variables
-
-# Überprüfen der Benutzerantwort
-if [ $? -eq 0 ]; then
+case $choice in
+  1)
     echo "HEADERS=yes" >> .config
-else
+    ;;
+  2)
     echo "HEADERS=no" >> .config
-fi
+    ;;
+  *)
+    echo "Invalid option"
+    ;;
+esac
 
+rm choice.txt
 ##########################################################################################################################
 whiptail --title "Menu" --menu "Choose a Desktop option" 20 65 10 \
 "1" "none" \
@@ -246,7 +248,7 @@ fi
 display_variables() {
     whiptail --title "Is this configuration correct?" --yesno \
     "SUITE=$SUITE\nKERNEL=$KERNEL\nHEADERS=$HEADERS\nDESKTOP=$DESKTOP\nUSERNAME=$USERNAME\nPASSWORD=$PASSWORD\nINTERACTIVE=$INTERACTIVE" \
-    20 60
+    20 65
 }
 
 # Anzeige der Variablen aufrufen
@@ -345,6 +347,7 @@ if [[ "$BUILD" == "yes" ]]; then
     rm .loop/root/.dockerenv
     cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
     cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
+    cp .loop/root/lib/linux-image-${BUILD}/rockchip/rk3399-rock-4se.dtb output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/
     umount .loop/root
 
     e2fsck -f ${ROOTFS}
