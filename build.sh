@@ -1,7 +1,7 @@
 #!/bin/bash
 
 INTERACTIVE=no
-TIMESTAMP=$(date +%Y-%m-%d)
+TIMESTAMP=$(date +%Y-%m-%d-%H-%M)
 ##########################################################################################################################
 usage() {
     echo "Usage: $0 [-h|--help] [-s|--suite SUITE] [-d|--desktop DESKTOP] [-a|--additional ADDITIONAL] [-u|--username USERNAME] [-p|--password PASSWORD] [-b]"
