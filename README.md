@@ -1,4 +1,4 @@
-# rock4se-image-builder v1.7
+# rock4se-image-builder v1.8
 ## With the latest Linux Kernel !!!
 For questions or suggestions use the Discussions forum
 ### PLEASE report any issues!
@@ -18,6 +18,7 @@ When you start your build just type 'sudo resizeroot' to expand root filesystem
     - Added a kernelupdater.sh script to the boot folder of the builds
     - Added option to install latest or standard Kernel
     ! WITH QEMU YOU CAN EMULATE ONLY DESKTOPS WITH STANDARD KERNEL
+    - Added installation of kernel headers.
 #####################################################################################
 # This script builds SD-Card images for Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
@@ -85,6 +86,7 @@ Type './build.sh -h'
     -h, --help                      Show this help message and exit
     -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)
     -k, --kernel latest/standard    Choose which kernel to install
+    -H, --headers yes/no            Install Kernelheaders
     -d, --desktop DESKTOP           Choose the desktop environment (e.g., xfce4, kde, none)
     -i, --interactive yes/no        Start an interactive shell in the docker container (yes/no)
                                     This only has an effect in kombination with -d or --desktop
@@ -95,7 +97,7 @@ Type './build.sh -h'
 
 For example to build Debian testing with XFCE with latest Kernel:
 ---------------------------------------------------
-     ./build -s testing -d xfce4 -k latest -u debian -p 123456 -i no -b
+     ./build -s testing -d xfce4 -k latest -H no -u debian -p 123456 -i no -b
 ---------------------------------------------------
 
 
