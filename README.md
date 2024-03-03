@@ -17,8 +17,8 @@ When you start your build just type 'sudo resizeroot' to expand root filesystem
     - Compile and install latest Kernel !!! At the moment it's 6.8.0-rc6 (2024-02-29)
     - Added a kernelupdater.sh script to the boot folder of the builds
     - Added option to install latest or standard Kernel
-    ! WITH QEMU YOU CAN EMULATE ONLY DESKTOPS WITH STANDARD KERNEL
     - Added installation of kernel headers.
+    _ !!! ADDED EMULATION OF CUSTOM KERNELS WITH GRAPHICS SUPPORT !!!
 #####################################################################################
 # This script builds SD-Card images for Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
