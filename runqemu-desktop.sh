@@ -3,8 +3,14 @@
 SDCARD=$1
 SCREEN=$2
 
-CPUS=$(($(nproc) / 2 ))
+available_cpus=$(nproc)
+max_cpus=8
 
+if ((available_cpus > max_cpus)); then
+    CPUS=$max_cpus
+else
+    CPUS=$available_cpus
+fi
 
 
 
@@ -15,7 +21,6 @@ if [ "$SCREEN" == "" ]; then
 sudo qemu-system-aarch64 \
   -M virt \
   -cpu cortex-a72 -smp $CPUS \
-  -cpu cortex-a53 -smp $CPUS \
   -m 2048 \
   -kernel "$(dirname "$SDCARD")/.qemu/"vmlinuz \
   -initrd "$(dirname "$SDCARD")/.qemu/"initrd.img \
@@ -35,7 +40,6 @@ sudo qemu-system-aarch64 \
   sudo qemu-system-aarch64 \
   -M virt \
   -cpu cortex-a72 -smp $CPUS \
-  -cpu cortex-a53 -smp $CPUS \
   -m 2048 \
   -kernel "$(dirname "$SDCARD")/.qemu/"vmlinuz \
   -initrd "$(dirname "$SDCARD")/.qemu/"initrd.img \
@@ -54,7 +58,6 @@ elif [ "$SCREEN" == "rw" ]; then
   sudo qemu-system-aarch64 \
   -M virt \
   -cpu cortex-a72 -smp $CPUS \
-  -cpu cortex-a53 -smp $CPUS \
   -m 2048 \
   -kernel "$(dirname "$SDCARD")/.qemu/"vmlinuz \
   -initrd "$(dirname "$SDCARD")/.qemu/"initrd.img \
