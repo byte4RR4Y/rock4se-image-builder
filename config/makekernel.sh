@@ -252,7 +252,7 @@ echo "${BUILD}" > ${CWD}/config/release
 KERNELDIR="KERNEL-${BUILD}"
 mkdir -p "${KERNELDIR}"
 echo "${BUILD}" ${CWD}/config/release.txt
-make -j ${CPUS} ARCH=arm64 KERNELRELEASE="${BUILD}" CROSS_COMPILE=aarch64-linux-gnu- Image.gz modules dtbs
+yes "" | make -j ${CPUS} ARCH=arm64 KERNELRELEASE="${BUILD}" CROSS_COMPILE=aarch64-linux-gnu- Image.gz modules dtbs
 env PATH=$PATH make KERNELRELEASE="${BUILD}" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=${KERNELDIR} modules_install
 
 if [ "$HEADERS" == "yes" ]; then
