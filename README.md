@@ -19,6 +19,7 @@ When you start your build just type 'sudo resizeroot' to expand root filesystem
     - Added option to install latest or standard Kernel
     - Added installation of kernel headers.
     - !!! ADDED EMULATION OF CUSTOM KERNELS WITH GRAPHICS SUPPORT !!!
+    - Removed QEMU scripts because it misconfigures the display
 #####################################################################################
 # This script builds SD-Card images for Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
@@ -37,19 +38,6 @@ When you start your build just type 'sudo resizeroot' to expand root filesystem
 OR START Image-builder-GUI_amd64
 
 You will find your image in the output folder.
-
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-#      DO NOT RUN QEMU IN RW MODE OTHERWISE THE
-# AUTO RESIZE ROOT FILESYSTEM ON FIRST BOOT WILL FAIL
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-# Run qemu emulation of your build
-
-## For example:
----------------------------------------------------
-    ./runqemu-cli.sh output/Debian-experimental-CLI-build-1708557914/Debian-experimental-CLI.img
-    ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708557914/Debian-experimental-xfce4-build-standard.img
-    ./runqemu-desktop.sh output/Debian-experimental-xfce4-build-1708557914/Debian-experimental-xfce4-build-standard.img nofullscreen
----------------------------------------------------
 
 # Adding custom packages to install
     -If you want to add packages to install, append it to config/apt-packages.txt
