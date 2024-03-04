@@ -5,7 +5,6 @@ CWD=$PWD
 OUTDIR=${CWD}
 CPUS=$(($(nproc)))
 
-# Kernel configuration
 export CONFIG_ARCH_ACTIONS=n
 export CONFIG_ARCH_SUNXI=n
 export CONFIG_ARCH_ALPINE=n
@@ -136,10 +135,8 @@ export CONFIG_DRM_GPUVM=m
 export CONFIG_DRM_BUDDY=m
 export CONFIG_DRM_VRAM_HELPER=m
 export CONFIG_DRM_TTM_HELPER=m
-#######################################
 export CONFIG_DRM_GEM_DMA_HELPER=m
 export CONFIG_DRM_GEM_SHMEM_HELPER=m
-#######################################
 export CONFIG_DRM_SUBALLOC_HELPER=m
 export CONFIG_DRM_SCHED=m
 export CONFIG_DRM_VKMS=m
@@ -233,7 +230,6 @@ export CONFIG_DRM_NOUVEAU=m
 export CONFIG_DRM_NOUVEAU_BACKLIGHT=y
 export CONFIG_DRM_NOUVEAU_GSP_DEFAULT=y
 export CONFIG_DRM_PANEL_JDI_LPM102A188A=m
-########################################################
 export CONFIG_DRM_KMB_DISPLAY=m
 export CONFIG_DRM_VGEM=m
 export CONFIG_DRM_TTM=m
