@@ -9,8 +9,7 @@ if [ -e /etc/configboot ]; then
   rm /etc/configboot
   touch /etc/default/FIRSTBOOT
   resizeroot
-  touch /etc/resizeroot
-  rm /etc/firstboot
+  rm /etc/configboot
   reboot
 fi
 
