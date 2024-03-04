@@ -245,6 +245,11 @@ export CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=n
 git clone --depth=1 https://github.com/torvalds/linux
 cd linux
 
+echo "CONFIG_DRM_VIRTIO_GPU" >> arch/arm64/configs/defconfig
+echo "CONFIG_AHCI" >> arch/arm64/configs/defconfig
+echo "CONFIG_PCIEPORT" >> arch/arm64/configs/defconfig
+echo "CONFIG_VIRTIO_MMIO_CMDLINE_DEVICES" >> arch/arm64/configs/defconfig
+
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
 
 BUILD="$(sed -n 's|^.*\s\+\(\S\+\.\S\+\.\S\+\)\s\+Kernel Configuration$|\1|p' .config)"
