@@ -136,8 +136,10 @@ export CONFIG_DRM_GPUVM=m
 export CONFIG_DRM_BUDDY=m
 export CONFIG_DRM_VRAM_HELPER=m
 export CONFIG_DRM_TTM_HELPER=m
+#######################################
 export CONFIG_DRM_GEM_DMA_HELPER=m
 export CONFIG_DRM_GEM_SHMEM_HELPER=m
+#######################################
 export CONFIG_DRM_SUBALLOC_HELPER=m
 export CONFIG_DRM_SCHED=m
 export CONFIG_DRM_VKMS=m
@@ -231,6 +233,7 @@ export CONFIG_DRM_NOUVEAU=m
 export CONFIG_DRM_NOUVEAU_BACKLIGHT=y
 export CONFIG_DRM_NOUVEAU_GSP_DEFAULT=y
 export CONFIG_DRM_PANEL_JDI_LPM102A188A=m
+########################################################
 export CONFIG_DRM_KMB_DISPLAY=m
 export CONFIG_DRM_VGEM=m
 export CONFIG_DRM_TTM=m
@@ -242,11 +245,6 @@ export CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=n
 git clone --depth=1 https://github.com/torvalds/linux
 cd linux
 
-echo "CONFIG_DRM_VIRTIO_GPU=y" >> arch/arm64/configs/defconfig
-echo "CONFIG_AHCI=y" >> arch/arm64/configs/defconfig
-echo "CONFIG_PCIEPORT=y" >> arch/arm64/configs/defconfig
-echo "CONFIG_VIRTIO_MMIO_CMDLINE_DEVICES=y" >> arch/arm64/configs/defconfig
-
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
 
 BUILD="$(sed -n 's|^.*\s\+\(\S\+\.\S\+\.\S\+\)\s\+Kernel Configuration$|\1|p' .config)"
@@ -254,7 +252,7 @@ echo "${BUILD}" > ${CWD}/config/release
 KERNELDIR="KERNEL-${BUILD}"
 mkdir -p "${KERNELDIR}"
 echo "${BUILD}" ${CWD}/config/release.txt
-yes "" | make -j ${CPUS} ARCH=arm64 KERNELRELEASE="${BUILD}" CROSS_COMPILE=aarch64-linux-gnu- Image.gz modules dtbs
+make -j ${CPUS} ARCH=arm64 KERNELRELEASE="${BUILD}" CROSS_COMPILE=aarch64-linux-gnu- Image.gz modules dtbs
 env PATH=$PATH make KERNELRELEASE="${BUILD}" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=${KERNELDIR} modules_install
 
 if [ "$HEADERS" == "yes" ]; then
@@ -285,8 +283,8 @@ fi
 chown "${REALUSER}:${REALUSER}" "${ARCHIVE}"
 cd ${CWD}/linux
 mv "${KERNELDIR}/${ARCHIVE}" "${OUTDIR}"
-rm -rf "${KERNELDIR}"
+#rm -rf "${KERNELDIR}"
 cd ${CWD}
-rm -rf linux
+#rm -rf linux
 
 echo "1" > ${CWD}/config/kernel_status
