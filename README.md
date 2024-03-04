@@ -20,6 +20,7 @@ When you start your build just type 'sudo resizeroot' to expand root filesystem
     - Added installation of kernel headers.
     - !!! ADDED EMULATION OF CUSTOM KERNELS WITH GRAPHICS SUPPORT !!!
     - Removed QEMU scripts because it misconfigures the display
+    - Removed the gui
 #####################################################################################
 # This script builds SD-Card images for Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
@@ -35,7 +36,6 @@ When you start your build just type 'sudo resizeroot' to expand root filesystem
 
 # To build an SD-Card image:
     sudo ./build.sh
-OR START Image-builder-GUI_amd64
 
 You will find your image in the output folder.
 
