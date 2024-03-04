@@ -6,7 +6,6 @@ if [ -e /etc/configboot ]; then
   dpkg-reconfigure lightdm
   dpkg-reconfigure sddm
   dpkg-reconfigure gdm3
-  rm /etc/configboot
   touch /etc/default/FIRSTBOOT
   resizeroot
   rm /etc/configboot
