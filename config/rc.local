@@ -8,12 +8,10 @@ if [ -e /etc/configboot ]; then
   dpkg-reconfigure gdm3
   rm /etc/configboot
   touch /etc/default/FIRSTBOOT
-fi
-
-if [ -e /etc/default/FIRSTBOOT ]; then
   resizeroot
   touch /etc/resizeroot
   rm /etc/firstboot
   reboot
 fi
+
 exit 0
