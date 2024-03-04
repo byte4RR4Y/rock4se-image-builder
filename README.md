@@ -1,4 +1,4 @@
-# rock4se-image-builder v2.1
+# rock4se-image-builder v2.2 FINAL VERSION
 ## With the latest Linux Kernel !!!
 For questions or suggestions use the Discussions forum
 ### PLEASE report any issues!
