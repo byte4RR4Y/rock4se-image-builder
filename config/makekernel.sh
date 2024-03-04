@@ -1,4 +1,4 @@
-#! /bin/bash
+ #! /bin/bash
 
 HEADERS=$1
 CWD=$PWD
@@ -250,14 +250,14 @@ echo "CONFIG_AHCI=y" >> arch/arm64/configs/defconfig
 echo "CONFIG_PCIEPORT=y" >> arch/arm64/configs/defconfig
 echo "CONFIG_VIRTIO_MMIO_CMDLINE_DEVICES=y" >> arch/arm64/configs/defconfig
 
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+yes "" | make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
 
 BUILD="$(sed -n 's|^.*\s\+\(\S\+\.\S\+\.\S\+\)\s\+Kernel Configuration$|\1|p' .config)"
 echo "${BUILD}" > ${CWD}/config/release
 KERNELDIR="KERNEL-${BUILD}"
 mkdir -p "${KERNELDIR}"
 echo "${BUILD}" ${CWD}/config/release.txt
-make -j ${CPUS} ARCH=arm64 KERNELRELEASE="${BUILD}" CROSS_COMPILE=aarch64-linux-gnu- Image.gz modules dtbs
+yes "" | make -j ${CPUS} ARCH=arm64 KERNELRELEASE="${BUILD}" CROSS_COMPILE=aarch64-linux-gnu- Image.gz modules dtbs
 env PATH=$PATH make KERNELRELEASE="${BUILD}" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=${KERNELDIR} modules_install
 
 if [ "$HEADERS" == "yes" ]; then
