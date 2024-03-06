@@ -1,4 +1,5 @@
-# rock4se-image-builder v2.2 FINAL VERSION
+# rock4se-image-builder v2.2 (DEPRECATED)
+# USE https://github.com/byte4RR4Y/rock4se-image-builder
 ## With the latest Linux Kernel !!!
 For questions or suggestions use the Discussions forum
 ### PLEASE report any issues!
