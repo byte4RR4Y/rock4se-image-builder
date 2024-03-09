@@ -1,5 +1,4 @@
 # rock4se-image-builder v2.2
-# USE https://github.com/byte4RR4Y/rock-image-builder
 ## With the latest Linux Kernel !!!
 For questions or suggestions use the Discussions forum
 ### PLEASE report any issues!
