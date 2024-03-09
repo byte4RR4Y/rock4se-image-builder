@@ -74,7 +74,7 @@ Type './build.sh -h'
     -h, --help                      Show this help message and exit
     -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)
     -k, --kernel latest/standard    Choose which kernel to install
-    -H, --headers yes/no            Install Kernelheaders
+    -H, --headers yes/no            Install Kernelheaders(only with standard Kernel)
     -d, --desktop DESKTOP           Choose the desktop environment (e.g., xfce4, kde, none)
     -i, --interactive yes/no        Start an interactive shell in the docker container (yes/no)
                                     This only has an effect in kombination with -d or --desktop
