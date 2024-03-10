@@ -13,8 +13,9 @@ if [ $# -ne 1 ]; then
     echo "         ro=readonly (Standard)"
     echo "         rw=read/write mode"
     echo ""
-    echo "WARNING: After rw mode the image will not longer boot on Rock4SE!"
-    echo "         This is just for emulation or developing on a x86 host."
+    echo "WARNING: After rw mode the image will not longer boot custom"
+    echo "         Kernels on your Rock4SE board! This is just for"
+    echo "         emulation or developing on a x86 host."
     echo ""
     exit 1
 fi
