@@ -22,6 +22,4 @@ cp arch/arm64/boot/Image.gz "/boot/vmlinuz-${BUILD}"
 cp arch/arm64/boot/dts/rockchip/*.dtb "/lib/linux-image-${BUILD}/rockchip/"
 update-initramfs -c -v -k ${BUILD}
 u-boot-update
-cd ..
-rm -rf linux/
 
