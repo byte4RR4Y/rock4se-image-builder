@@ -29,7 +29,7 @@ For questions or suggestions use the Discussions forum or Email.
     - Improved 'makekernel.sh'
     - Replace '/etc/init.d/resize2fs' and 'resizeroot' script with 'rootresize.service'
     - Created 'rock-emulator.sh' to emulate builds; start it with:
-      'sudo ./rock-emulator.sh'
+      'sudo ./rock-emulator.sh IMAGEFILE.img'
       for more information about ro and rw mode.
 #####################################################################################
 # This script builds SD-Card images for Radxa Rock 4 SE as it follows:
