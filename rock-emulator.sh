@@ -9,7 +9,7 @@ if [ "$UID" -ne 0 ]; then
 fi
 
 if [ $# -ne 1 ]; then
-    echo "Usage:   $0 <image_file> [ro|rw]"
+    echo "Usage:   $0 <image_file> [rw]"
     echo "         ro=readonly (Standard)"
     echo "         rw=read/write mode"
     echo ""
