@@ -31,7 +31,10 @@ For questions or suggestions use the Discussions forum or Email.
     - Created 'rock-emulator.sh' to emulate builds; start it with:
       'sudo ./rock-emulator.sh IMAGEFILE.img'
       for more information about ro and rw mode.
+    - Added Hardware-overlays and 'rsetup'(Do not use it for overclocking!)
+    
 ## INFO: I to add installation of Headers for custom Kernels
+
 #####################################################################################
 # This script builds SD-Card images for Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
