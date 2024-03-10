@@ -1,4 +1,4 @@
-# rock4se-image-builder v2.5  >!UPDATED!<
+# rock4se-image-builder v2.6  >!UPDATED!<
 
 ## On first boot of the builds the device reboots after resizing root filesystem
 
@@ -32,6 +32,7 @@ For questions or suggestions use the Discussions forum or Email.
       'sudo ./rock-emulator.sh IMAGEFILE.img'
       for more information about ro and rw mode.
     - Added Hardware-overlays and 'rsetup'(Do not use it for overclocking!)
+    - Fixed issue with 'rootresize.service'
     
 ## INFO: I try to add installation of Headers for custom Kernels
 
