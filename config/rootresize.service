@@ -1,76 +1,10 @@
-#!/bin/bash
+[Unit]
+Description=Root Resize Service
+After=multi-user.target
 
-. /lib/init/vars.sh
-. /lib/lsb/init-functions
+[Service]
+Type=simple
+ExecStart=/etc/init.d/rootresize
 
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-Log=/var/log/armhwinfo.log
-
-do_expand_partition()
-{
-	local rootpart=$(findmnt -n -o SOURCE /)
-	local rootdevice=$(lsblk -n -o PKNAME $rootpart)
-	local rootdevicepath="/dev/$rootdevice"
-	local partitions=$(parted $rootdevicepath print -sm | tail -1 | awk -F ':' '{print $1}')
-	local partstart=$(parted $rootdevicepath unit s print -sm | tail -1 | cut -d: -f2 | sed 's/s//')
-	local partend=$(parted $rootdevicepath unit s print -sm | head -3 | tail -1 | cut -d: -f3 | sed 's/s//')
-	local startfrom=$(( $partend + 1 ))
-	[[ $partitions == 1 ]] && startfrom=$partstart
-	local capacity=$(( $(lsblk -n -b -d -o SIZE $rootdevicepath) / 1024 / 1024 / 1024 ))
-
-		if [[ $capacity -lt 5 ]]; then
-			local lastsector=$(parted $rootdevicepath unit s print -sm | grep "^$rootdevicepath" | awk -F":" "{print \$2 - (200 * 1024 * ( 1024 / \$4 ))}")
-			if [[ $lastsector -lt $partend ]]; then
-				unset lastsector
-			else
-				ResizeLog="4GB media so leaving 200MB spare area"
-			fi
-		elif [[ $capacity -lt 9 ]]; then
-			local lastsector=$(( 32 * $(parted $rootdevicepath unit s print -sm | grep "^$rootdevicepath" | awk -F":" "{printf (\"%0d\", ( \$2 * 98 / 3200))}") -1 ))
-			if [[ $lastsector -lt $partend ]]; then
-				unset lastsector
-			else
-				ResizeLog="8GB media so leaving 2 percent spare area"
-			fi
-		else
-			# Leave 1 percent unpartitioned
-			local lastsector=$(( 32 * $(parted $rootdevicepath unit s print -sm | grep "^$rootdevicepath" | awk -F":" "{printf (\"%0d\", ( \$2 * 99 / 3200))}") -1 ))
-			if [[ $lastsector -lt $partend ]]; then
-				unset lastsector
-			else
-				ResizeLog="Leaving 1 percent spare area"
-			fi
-		fi
-
-	echo -e "\n### [firstrun] ${ResizeLog}. Start resizing partition $rootpart now:\n" >>${Log}
-	cat /proc/partitions >>${Log}
-	echo -e "\nExecuting fdisk, fsck and partprobe:" >>${Log}
-	local fdisk_version=$(fdisk --version | awk '{print $NF}' | grep -oE "^[[:digit:]]\.[[:digit:]]+")
-	if [[ $partitions == 1 ]] && awk "BEGIN{exit ! ($fdisk_version >= 2.27 )}"; then
-		((echo d; echo n; echo p; echo ; echo $startfrom; echo $lastsector ; echo w;) | fdisk $rootdevicepath) >>${Log} 2>&1
-	else
-		((echo d; echo $partitions; echo n; echo p; echo ; echo $startfrom; echo $lastsector ; echo w;) | fdisk $rootdevicepath) >>${Log} 2>&1
-	fi
-	[[ -n $secondpartition ]] && \
-		((echo n; echo p; echo ; echo $(( $lastsector + 1 )); echo $secondpartition ; echo w;) | fdisk $rootdevicepath) >>${Log} 2>&1
-	local s=0
-	partprobe $rootdevicepath >>${Log} 2>&1 || s=$?
-	echo -e "\nNew partition table:\n" >>${Log}
-	cat /proc/partitions >>${Log}
-	echo -e "\nNow trying to resize $1 filesystem on $rootpart to the limits:\n" >>${Log}
-	resize2fs $rootpart >>${Log} 2>&1
-	local freesize=$(( $(findmnt --target / -n -o AVAIL -b) / 1048576 ))
-	}
-do_expand_ext4()
-{
-	local rootpart=$1
-	echo -e "\n### [resize2fs] Start resizing ext4 partition $1 now\n" >> ${Log}
-	resize2fs ${rootpart} >> ${Log} 2>&1
-}
-rootfstype=$(findmnt -n -o FSTYPE /)
-rootpart=$(findmnt -n -o SOURCE /)
-do_expand_partition ${rootfstype}
-do_expand_ext4 ${rootpart}
-systemctl disable resize2fs
-echo "1" > /etc/resize_status
-exit 0
+[Install]
+WantedBy=multi-user.target

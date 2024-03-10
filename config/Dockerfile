@@ -100,10 +100,11 @@ RUN if [ "$KERNEL" = "standard" ]; then \
     ; fi
 
 ## INSTALL AUTO RESIZE ROOT FILESYSTEM SERVICE
-COPY config/rootresize.service /etc/init.d/
-RUN chmod +x /etc/init.d/rootresize.service
+COPY config/rootresize.service /etc/systemd/system/
+COPY config/rootresize /etc/init.d/
+RUN chmod +x /etc/init.d/rootresize
 RUN echo "0" > /etc/resize_status
-RUN systemctl enable /etc/init.d/rootresize.service
+RUN systemctl enable rootresize.service
 
 ## Inserting the rc.local boot script
 COPY config/rc.local /etc
