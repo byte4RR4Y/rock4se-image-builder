@@ -66,7 +66,7 @@ You will find your image in the output folder.
   - lxde
   - unity
   - budgie
-  - kde plasma
+  - kde
 
 # Automating the build process by using the commandline is possible
 Type './build.sh -h'
