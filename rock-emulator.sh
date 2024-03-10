@@ -20,7 +20,7 @@ if [ $# -ne 1 ]; then
 fi
 
 if [ "$MODE"  == "rw" ]; then
-    MODE=rw
+    echo "WARNING RUNNING IN READ/WRITE MODE!"
 else
     MODE=ro
 fi
