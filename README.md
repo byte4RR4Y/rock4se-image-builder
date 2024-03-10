@@ -1,8 +1,11 @@
-# rock4se-image-builder v2.2
-## With the latest Linux Kernel !!!
-For questions or suggestions use the Discussions forum
-### PLEASE report any issues!
-When you start your build just type 'sudo resizeroot' to expand root filesystem
+# rock4se-image-builder v2.5  >!UPDATED!<
+
+## On first boot of the builds the device reboots after resizing root filesystem
+
+### You can choose the latest availible Linux Kernel!!!
+
+For questions or suggestions use the Discussions forum or Email.
+
 #####################################################################################
 ## Changes
     - Fixed some issues with the Dockerfile
@@ -19,8 +22,15 @@ When you start your build just type 'sudo resizeroot' to expand root filesystem
     - Added option to install latest or standard Kernel
     - Added installation of kernel headers.
     - !!! ADDED EMULATION OF CUSTOM KERNELS WITH GRAPHICS SUPPORT !!!
-    - Removed QEMU scripts because it misconfigures the display
+    - Removed QEMU scripts because they misconfigure the displaymanager of custom Kernels
     - Removed the gui
+    - Added 'autoinstaller.sh' to install Radxa Metapackage for Rock4SE on first inet-connection
+    - Improved 'rc.local', 'Dockerfile' and 'build.sh'
+    - Improved 'makekernel.sh'
+    - Replace '/etc/init.d/resize2fs' and 'resizeroot' script with 'rootresize.service'
+    - Created 'rock-emulator.sh' to emulate builds; start it with:
+      'sudo ./rock-emulator.sh'
+      for more information about ro and rw mode.
 #####################################################################################
 # This script builds SD-Card images for Radxa Rock 4 SE as it follows:
     - Building the root-filesystem inside a docker container.
@@ -34,14 +44,14 @@ When you start your build just type 'sudo resizeroot' to expand root filesystem
     sudo ./install.sh
 ----------------------
 
-# To build an SD-Card image:
+# To build an SD-Card image, just simply type:
     sudo ./build.sh
 
 You will find your image in the output folder.
 
 # Adding custom packages to install
     -If you want to add packages to install, append it to config/apt-packages.txt
-     instead of modifying the Dockerfile
+     instead of modifying the Dockerfile, For each package add a new line.
 
 # Required Host system:
   - Debian/amd64 (bullseye, bookworm, MX 21 and MX23 are tested)
@@ -57,7 +67,7 @@ You will find your image in the output folder.
   - Bullseye
 
 ##Currently supported desktops:
-  - none(Command line interface/tested)
+  - none     (Command line interface/tested)
   - xfce     (tested)
   - gnome    (tested)
   - mate
@@ -66,7 +76,7 @@ You will find your image in the output folder.
   - lxde
   - unity
   - budgie
-  - kde
+  - kde plasma
 
 # Automating the build process by using the commandline is possible
 Type './build.sh -h'
@@ -74,18 +84,19 @@ Type './build.sh -h'
     -h, --help                      Show this help message and exit
     -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)
     -k, --kernel latest/standard    Choose which kernel to install
-    -H, --headers yes/no            Install Kernelheaders(only with standard Kernel)
+    -H, --headers yes/no            Install Kernelheaders (only with standard Kernel)
     -d, --desktop DESKTOP           Choose the desktop environment (e.g., xfce4, kde, none)
     -i, --interactive yes/no        Start an interactive shell in the docker container (yes/no)
+                                    Standard is set to 'no'.
                                     This only has an effect in kombination with -d or --desktop
     -u, --username USERNAME         Enter the username for the sudo user
     -p, --password PASSWORD         Enter the password for the sudo user
     -b                              Build the image with the specified configuration without asking
 ---------------------------------------------------
 
-For example to build Debian testing with XFCE with latest Kernel:
+For example to build Debian testing with XFCE with latest Kernel, no Headers and creaating a sudo user with username debian and password 123456:
 ---------------------------------------------------
-     ./build -s testing -d xfce4 -k latest -H no -u debian -p 123456 -i no -b
+     ./build -s testing -d xfce4 -k latest -H no -u debian -p 123456 -b
 ---------------------------------------------------
 
 

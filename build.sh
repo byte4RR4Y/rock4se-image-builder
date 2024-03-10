@@ -1,7 +1,12 @@
 #!/bin/bash
 
+# Setting interactive mode to 'no' as standard
 INTERACTIVE=no
-TIMESTAMP=$(date +%Y-%m-%d-%H-%M)
+
+# Generate a timestamp: YEAR-MONTH-DAY_HOURS-MINUTES
+TIMESTAMP=$(date +%Y-%m-%d_%H-%M)
+
+# -h/--help option for commandline instructions
 ##########################################################################################################################
 usage() {
     echo "Usage: $0 [-h|--help] [-s|--suite SUITE] [-d|--desktop DESKTOP] [-a|--additional ADDITIONAL] [-u|--username USERNAME] [-p|--password PASSWORD] [-b]"
@@ -10,7 +15,7 @@ usage() {
     echo "  -h, --help                      Show this help message and exit"
     echo "  -s, --suite SUITE               Choose the Debian suite (e.g., testing, experimental, trixie)"
     echo "  -k, --kernel latest/standard    Choose which kernel to install"
-    echo "  -H, --headers yes/no            Install Kernel headers(only with standard Kernel)"
+    echo "  -H, --headers yes/no            Install Kernel headers(only works with standard Kernel)"
     echo "  -d, --desktop DESKTOP           Choose the desktop environment."
     echo "                                  (none/xfce4/gnome/cinnamon/lxqt/lxde/unity/budgie/kde)"
     echo "                                  This only has an effect in kombination with -d or --desktop"
@@ -47,6 +52,7 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
+# Cleaning Build area
 echo "----------------------"
 echo "cleaning build area..."
 echo "----------------------"
@@ -57,12 +63,19 @@ rm .rootfs.tar
 rm -rf .rootfs/
 rm config/rootfs_size.txt
 echo ""
-##########################################################################################################################
 # Check if arguments are missing
-if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$KERNEL" ] || [ -z "$HEADERS" ]; then
 ##########################################################################################################################
-info_text="HELP ME TO IMPROVE THIS PROGRAM\n\nSend an E-mail with suggestions to: byte4rr4y@gmail.com"
+if [ -z "$SUITE" ] || [ -z "$DESKTOP" ] || [ -z "$USERNAME" ] || [ -z "$PASSWORD" ] || [ -z "$KERNEL" ] || [ -z "$HEADERS" ]; then
+
+##########################################################################################################################
+# NOW THE MENU FOR CHOOSING REQUIRED OPTIONS START IF NOT ENOUGH COMMANDLINE ARGUMENTS ARE GIVEN
+##########################################################################################################################
+
+# Welcome message
+##########################################################################################################################
+info_text="                          Welcome to rock4se-image-builder\n"
 whiptail --title "Information" --msgbox "$info_text" 20 65
+# Here we choose the Debian Suite
 ##########################################################################################################################
 whiptail --title "Menu" --menu "Choose a Debian Suite" 20 65 6 \
 "1" "testing" \
@@ -98,6 +111,8 @@ case $choice in
 esac
 
 rm choice.txt
+
+# Here we choose the Kernel to install
 ##########################################################################################################################
 whiptail --title "Menu" --menu "Choose Kernel to install" 20 65 6 \
 "1" "Standardkernel of the Debian Suite" \
@@ -117,9 +132,10 @@ case $choice in
 esac
 
 rm choice.txt
+# Here we choose installation of the kernel headers
 ##########################################################################################################################
 whiptail --title "Menu" --menu "KERNEL HEADERS" 20 65 6 \
-"1" "Install Kernel headers" \
+"1" "Install Kernel headers(only works with standard Kernel)" \
 "2" "Do not install Kernel headers" 2> choice.txt
 choice=$(cat choice.txt)
 
@@ -136,6 +152,7 @@ case $choice in
 esac
 
 rm choice.txt
+# Here we choose the desktop which will be installed
 ##########################################################################################################################
 whiptail --title "Menu" --menu "Choose a Desktop option" 20 65 10 \
 "1" "none" \
@@ -186,6 +203,7 @@ case $choice in
     ;;
 esac
 rm choice.txt
+# Here we choose Username and Password for the only created user
 ##########################################################################################################################    
 
 USERNAME=$(whiptail --title "Create sudo user" --inputbox "Enter username:" 20 65 3>&1 1>&2 2>&3)
@@ -195,27 +213,29 @@ PASSWORD=$(whiptail --title "Create sudo user" --passwordbox "Enter password:" 2
 
 echo "USERNAME=${USERNAME}" >> .config
 echo "PASSWORD=${PASSWORD}" >> .config
+# Here we can decide if we wish an interactive shell inside the docker container or not
 ##########################################################################################################################
 whiptail --title "Menu" --menu "Choose an option" 20 65 4 \
-"1" "Start interactive shell in the container" \
-"2" "Just build with the given configuration" 2> choice.txt
+"1" "Just build with the given configuration" \
+"2" "Start interactive shell in the container" 2> choice.txt
 
 choice=$(cat choice.txt)
 
 case $choice in
   1)
-    echo "INTERACTIVE=yes" >> .config
+    echo "INTERACTIVE=no" >> .config
     ;;
   2)
-    echo "INTERACTIVE=no" >> .config
+    echo "INTERACTIVE=yes" >> .config
     ;;
   *)
     echo "Invalid option"
     ;;
-esac
-rm choice.txt
+  esac
+  rm choice.txt
+# Read the configuration from the configfile
 ##########################################################################################################################
-while IFS='=' read -r key value; do
+  while IFS='=' read -r key value; do
     case "$key" in
     	SUITE)
     		SUITE="$value"
@@ -241,26 +261,28 @@ while IFS='=' read -r key value; do
         *)
             ;;
     esac
-done < .config
-fi
-
+  done < .config
+# Displaying the configuration of the build and ask for start or cancel the build-process
 ##########################################################################################################################
-display_variables() {
+  display_variables() {
     whiptail --title "Is this configuration correct?" --yesno \
     "SUITE=$SUITE\nKERNEL=$KERNEL\nHEADERS=$HEADERS\nDESKTOP=$DESKTOP\nUSERNAME=$USERNAME\nPASSWORD=$PASSWORD\nINTERACTIVE=$INTERACTIVE" \
     20 65
-}
+  }
 
 # Anzeige der Variablen aufrufen
-display_variables
+  display_variables
 
 # Überprüfen der Benutzerantwort
-if [ $? -eq 0 ]; then
-    BUILD=yes
-else
-    BUILD=no
+  if [ $? -eq 0 ]; then
+      BUILD=yes
+  elif [ $? -eq 1 ]; then
+      BUILD=no
+  fi
 fi
 
+
+# Start the building process
 ##########################################################################################################################
 if [[ "$BUILD" == "yes" ]]; then
     while IFS='=' read -r key value; do
@@ -288,11 +310,13 @@ if [[ "$BUILD" == "yes" ]]; then
         esac
     done < .config
 
+# If latest Kernel was chosen starting the download and building process of the latest availible Linux Kernel
 ##########################################################################################################################
     if [ "$KERNEL" == "latest" ]; then
       echo "0" > config/kernel_status
       xfce4-terminal --title="Building Kernel" --command="config/makekernel.sh $HEADERS" &
     fi
+# Building a docker image for the root filesystem creation
 ##########################################################################################################################    
     echo "Building Docker image..."
     sleep 1
@@ -300,9 +324,12 @@ if [[ "$BUILD" == "yes" ]]; then
     docker rm debiancontainer
     docker rmi debian:finest
     docker build --build-arg "SUITE="$SUITE --build-arg "DESKTOP="$DESKTOP --build-arg "USERNAME="$USERNAME --build-arg "PASSWORD="$PASSWORD --build-arg "KERNEL="$KERNEL --build-arg "HEADERS="$HEADERS -t debian:finest -f config/Dockerfile .
+# Create a docker container with the previous created docker image
 ##########################################################################################################################    
     docker run --platform=aarch64 -dit --name debiancontainer debian:finest /bin/bash  
 
+# If latest Kernel was chosen waiting for finished cross-compilation and install it inside the container
+##########################################################################################################################
     if [ "$KERNEL" == "latest" ]; then
       echo "Waiting for Kernel compilation..."
       while [[ "$(cat config/kernel_status)" != "1" ]]; do
@@ -320,18 +347,22 @@ if [[ "$BUILD" == "yes" ]]; then
       echo "standard" > config/release
     fi
 
-    docker cp config/resizeroot debiancontainer:/usr/local/bin
-    docker exec debiancontainer bash -c 'chmod +x /usr/local/bin/resizeroot'
-    
+# If interactive shell was selected start it
 ##########################################################################################################################    
     if [[ "$INTERACTIVE" == "yes" ]]; then
         docker attach debiancontainer
         docker start debiancontainer       
     fi
+# Get size of the root filesystem(needed for image creation)  
 ##########################################################################################################################    
+    docker exec debiancontainer bash -c "echo \$((\$(du -s -m --exclude=/proc --exclude=/sys --exclude=/dev / | awk '{print \$1}'))) > /rootfs_size.txt"
     docker cp debiancontainer:/rootfs_size.txt config/
+
+# Image creation
+##########################################################################################################################
     ROOTFS=.rootfs.img
     rootfs_size=$(cat config/rootfs_size.txt)
+    
     echo "Creating an empty rootfs image..."
     dd if=/dev/zero of=$ROOTFS bs=1M count=$((${rootfs_size} + 750)) status=progress
     rm config/rootfs_size.txt
@@ -341,33 +372,37 @@ if [[ "$BUILD" == "yes" ]]; then
     mount ${ROOTFS} .loop/root
     docker export -o .rootfs.tar debiancontainer
     tar -xvf .rootfs.tar -C .loop/root
-    
+    rm .loop/root/.dockerenv
     docker kill debiancontainer
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
-    rm .loop/root/.dockerenv
+    
+    # Copy the Kernel and intard image to emulate the build with QEMU
     cp .loop/root/boot/vmlinuz* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/vmlinuz
     cp .loop/root/boot/initrd* output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/initrd.img
-    cp .loop/root/lib/linux-image-${BUILD}/rockchip/rk3399-rock-4se.dtb output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu/
     umount .loop/root
 
     e2fsck -f ${ROOTFS}
     gzip ${ROOTFS}
     mkdir -p output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/.qemu
     RELEASE=$(cat config/release)
+# Creating the final build
+##########################################################################################################################
     zcat config/boot-rock_pi_4se.bin.gz ${ROOTFS}.gz > "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img"
     chown -R ${SUDO_USER}:${SUDO_USER} output/
     rm -rf .loop/root .loop/ .rootfs.img .rootfs.tar "${ROOTFS}.gz"
-##########################################################################################################################
-
+    SDCARDIMAGE="output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img"
     filesize=$(stat -c %s "output/Debian-${SUITE}-${DESKTOP}-build-${TIMESTAMP}/Debian-${SUITE}-${DESKTOP}-Kernel-${RELEASE}.img")
     if [ $filesize -gt 1073741824 ]; then
+      if [ -e "$(dirname $SDCARDIMAGE)/.qemu/vmlinuz" ] && [ -e "$(dirname $SDCARDIMAGE)/.qemu/initrd.img" ]; then
         echo "--------------------------------------"
         echo "CONGRATULATION, BUILD WAS SUCCESSFULL!"
         echo "--------------------------------------"
+      fi
     else
         echo "--------------------------------"
         echo "SORRY, BUILD WAS NOT SUCCESSFULL"
         echo "--------------------------------"
     fi
     rm config/release
+    rm -rf "$(dirname "$SDCARDIMAGE")/.qemu"
 fi
