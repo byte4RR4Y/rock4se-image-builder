@@ -50,6 +50,10 @@ For questions or suggestions use the Discussions forum or Email.
 
 You will find your image in the output folder.
 
+#### If you make a build without desktop you can connect your wireless with:
+     nmcli device wifi connect "NAME_OF_YOUR_NETWORK" --ask
+Now just enter your password and press [RETURN]
+
 # Adding custom packages to install
     -If you want to add packages to install, append it to config/apt-packages.txt
      instead of modifying the Dockerfile, For each package add a new line.
