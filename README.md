@@ -1,4 +1,4 @@
-# SORRY I made a mistake I repair the script later( in a few hours)
+# SORRY I made a mistake I repair the script at the moment
 
 # rock4se-image-builder v2.6  >!UPDATED!<
 
